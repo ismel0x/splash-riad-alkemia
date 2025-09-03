@@ -308,8 +308,8 @@ export default function WiFiLogin() {
       {/* Footer */}
       <footer className="w-full p-4">
         <div className="max-w-md mx-auto text-center">
-          <p className="text-xs text-muted-foreground" data-testid="text-powered-by">
-            Powered by <span className="text-primary font-medium">Nextwi</span>
+          <p className="text-xs text-black" data-testid="text-powered-by">
+            Powered by <span className="text-black font-medium">Nextwi</span>
           </p>
         </div>
       </footer>
