@@ -37,8 +37,7 @@ export class MemStorage implements IStorage {
   async createWifiGuest(insertGuest: InsertWifiGuest): Promise<WifiGuest> {
     const id = randomUUID();
     const guest: WifiGuest = { 
-      ...insertGuest,
-      language: insertGuest.language || "en",
+      ...insertGuest, 
       id,
       createdAt: new Date()
     };

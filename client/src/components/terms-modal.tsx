@@ -45,41 +45,26 @@ export function TermsModal({ isOpen, onClose, onAccept, language }: TermsModalPr
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4 text-sm text-foreground">
             <h4 className="font-semibold">{t.termsContent.title}</h4>
-            <p className="text-xs text-muted-foreground font-medium">{t.termsContent.subtitle}</p>
             <p>{t.termsContent.intro}</p>
             
             <div>
-              <h5 className="font-medium mb-2">{t.termsContent.serviceUsage}</h5>
-              <div className="text-muted-foreground whitespace-pre-line">{t.termsContent.serviceUsageText}</div>
+              <h5 className="font-medium mb-2">{t.termsContent.acceptableUse}</h5>
+              <p className="text-muted-foreground">{t.termsContent.acceptableUseText}</p>
             </div>
             
             <div>
-              <h5 className="font-medium mb-2">{t.termsContent.userResponsibilities}</h5>
-              <div className="text-muted-foreground whitespace-pre-line">{t.termsContent.userResponsibilitiesText}</div>
+              <h5 className="font-medium mb-2">{t.termsContent.dataPrivacy}</h5>
+              <p className="text-muted-foreground">{t.termsContent.dataPrivacyText}</p>
             </div>
             
             <div>
-              <h5 className="font-medium mb-2">{t.termsContent.privacySecurity}</h5>
-              <div className="text-muted-foreground whitespace-pre-line">{t.termsContent.privacySecurityText}</div>
+              <h5 className="font-medium mb-2">{t.termsContent.networkSecurity}</h5>
+              <p className="text-muted-foreground">{t.termsContent.networkSecurityText}</p>
             </div>
             
             <div>
-              <h5 className="font-medium mb-2">{t.termsContent.limitations}</h5>
-              <div className="text-muted-foreground whitespace-pre-line">{t.termsContent.limitationsText}</div>
-            </div>
-            
-            <div>
-              <h5 className="font-medium mb-2">{t.termsContent.support}</h5>
-              <div className="text-muted-foreground">
-                <a href="https://support.nextwi.co" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                  {t.termsContent.supportText}
-                </a>
-              </div>
-            </div>
-            
-            <div className="border-t pt-4 mt-6">
-              <p className="text-muted-foreground text-xs italic">{t.termsContent.footer}</p>
-              <p className="text-muted-foreground text-xs mt-2 font-medium">{t.termsContent.copyright}</p>
+              <h5 className="font-medium mb-2">{t.termsContent.serviceAvailability}</h5>
+              <p className="text-muted-foreground">{t.termsContent.serviceAvailabilityText}</p>
             </div>
           </div>
         </ScrollArea>

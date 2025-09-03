@@ -34,21 +34,16 @@ export const translations = {
       accessCodeHelp: "Need an access code? Contact reception or check your room information."
     },
     termsContent: {
-      title: "Terms & Conditions - Complimentary WiFi Service",
-      subtitle: "Powered by Nextwi SARL",
-      intro: "By connecting to this complimentary WiFi network, you agree to the following terms:",
-      serviceUsage: "Service Usage",
-      serviceUsageText: "• This WiFi service is provided free of charge for guests' convenience\n• Usage is limited to lawful activities only\n• Service availability and speed are not guaranteed\n• Connection time may be limited during peak hours",
-      userResponsibilities: "User Responsibilities",
-      userResponsibilitiesText: "• Users must not access illegal, offensive, or inappropriate content\n• No downloading of copyrighted material without authorization\n• Prohibited activities include hacking, spamming, or compromising network security\n• Users are responsible for protecting their own devices and data",
-      privacySecurity: "Privacy & Security",
-      privacySecurityText: "• This is an open network - users connect at their own risk\n• We recommend using HTTPS websites and VPN services for sensitive activities\n• Your internet activity may be monitored for security and compliance purposes\n• We do not guarantee the privacy or security of your data transmission",
-      limitations: "Limitations",
-      limitationsText: "• Service may be interrupted or discontinued without notice\n• Bandwidth may be limited to ensure fair usage for all users\n• Nextwi SARL is not liable for any damages resulting from service use\n• No technical support is provided for personal device configuration",
-      support: "Support",
-      supportText: "For any requests or technical issues, please visit our support portal: https://support.nextwi.co",
-      footer: "By using this service, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.",
-      copyright: "© 2025 Nextwi SARL - All rights reserved"
+      title: "WiFi Usage Agreement",
+      intro: "By connecting to the Riad Alkemia WiFi network, you agree to the following terms:",
+      acceptableUse: "1. Acceptable Use",
+      acceptableUseText: "The WiFi service is provided for legitimate internet use only. Prohibited activities include but are not limited to illegal downloads, streaming copyrighted content, and accessing inappropriate websites.",
+      dataPrivacy: "2. Data Privacy",
+      dataPrivacyText: "Your personal information will be handled in accordance with Moroccan privacy laws. We collect minimal necessary data for network access and guest services.",
+      networkSecurity: "3. Network Security",
+      networkSecurityText: "Users are responsible for their device security. Riad Alkemia is not liable for any data breaches or security issues arising from WiFi usage.",
+      serviceAvailability: "4. Service Availability",
+      serviceAvailabilityText: "WiFi service is provided on a best-effort basis. Service interruptions may occur due to maintenance or technical issues."
     }
   },
   fr: {
@@ -86,21 +81,16 @@ export const translations = {
       accessCodeHelp: "Besoin d'un code d'accès ? Contactez la réception ou vérifiez les informations de votre chambre."
     },
     termsContent: {
-      title: "Conditions Générales - Service WiFi Gratuit",
-      subtitle: "Alimenté par Nextwi SARL",
-      intro: "En vous connectant à ce réseau WiFi gratuit, vous acceptez les conditions suivantes :",
-      serviceUsage: "Utilisation du Service",
-      serviceUsageText: "• Ce service WiFi est fourni gratuitement pour la commodité des clients\n• L'utilisation est limitée aux activités légales uniquement\n• La disponibilité et la vitesse du service ne sont pas garanties\n• Le temps de connexion peut être limité pendant les heures de pointe",
-      userResponsibilities: "Responsabilités des Utilisateurs",
-      userResponsibilitiesText: "• Les utilisateurs ne doivent pas accéder à du contenu illégal, offensant ou inapproprié\n• Pas de téléchargement de matériel protégé par des droits d'auteur sans autorisation\n• Les activités interdites incluent le piratage, le spam ou la compromission de la sécurité du réseau\n• Les utilisateurs sont responsables de la protection de leurs propres appareils et données",
-      privacySecurity: "Confidentialité et Sécurité",
-      privacySecurityText: "• Il s'agit d'un réseau ouvert - les utilisateurs se connectent à leurs propres risques\n• Nous recommandons d'utiliser des sites web HTTPS et des services VPN pour les activités sensibles\n• Votre activité internet peut être surveillée à des fins de sécurité et de conformité\n• Nous ne garantissons pas la confidentialité ou la sécurité de votre transmission de données",
-      limitations: "Limitations",
-      limitationsText: "• Le service peut être interrompu ou interrompu sans préavis\n• La bande passante peut être limitée pour assurer une utilisation équitable pour tous les utilisateurs\n• Nextwi SARL n'est pas responsable des dommages résultant de l'utilisation du service\n• Aucun support technique n'est fourni pour la configuration d'appareils personnels",
-      support: "Support",
-      supportText: "Pour toute demande ou problème technique, veuillez visiter notre portail de support : https://support.nextwi.co",
-      footer: "En utilisant ce service, vous reconnaissez avoir lu, compris et accepté d'être lié par ces termes et conditions.",
-      copyright: "© 2025 Nextwi SARL - Tous droits réservés"
+      title: "Accord d'Utilisation WiFi",
+      intro: "En vous connectant au réseau WiFi du Riad Alkemia, vous acceptez les conditions suivantes :",
+      acceptableUse: "1. Utilisation Acceptable",
+      acceptableUseText: "Le service WiFi est fourni uniquement pour un usage internet légitime. Les activités interdites incluent notamment les téléchargements illégaux, le streaming de contenu protégé par des droits d'auteur et l'accès à des sites web inappropriés.",
+      dataPrivacy: "2. Confidentialité des Données",
+      dataPrivacyText: "Vos informations personnelles seront traitées conformément aux lois marocaines sur la confidentialité. Nous collectons un minimum de données nécessaires pour l'accès au réseau et les services aux clients.",
+      networkSecurity: "3. Sécurité du Réseau",
+      networkSecurityText: "Les utilisateurs sont responsables de la sécurité de leur appareil. Le Riad Alkemia n'est pas responsable des violations de données ou des problèmes de sécurité découlant de l'utilisation du WiFi.",
+      serviceAvailability: "4. Disponibilité du Service",
+      serviceAvailabilityText: "Le service WiFi est fourni au mieux. Des interruptions de service peuvent se produire en raison de maintenance ou de problèmes techniques."
     }
   },
   it: {
@@ -138,21 +128,16 @@ export const translations = {
       accessCodeHelp: "Hai bisogno del codice di accesso? Contatta la reception o controlla le informazioni della tua camera."
     },
     termsContent: {
-      title: "Termini e Condizioni - Servizio WiFi Gratuito",
-      subtitle: "Powered by Nextwi SARL",
-      intro: "Connettendoti a questa rete WiFi gratuita, accetti i seguenti termini:",
-      serviceUsage: "Utilizzo del Servizio",
-      serviceUsageText: "• Questo servizio WiFi è fornito gratuitamente per la comodità degli ospiti\n• L'uso è limitato solo alle attività legali\n• La disponibilità e la velocità del servizio non sono garantite\n• Il tempo di connessione può essere limitato durante le ore di punta",
-      userResponsibilities: "Responsabilità dell'Utente",
-      userResponsibilitiesText: "• Gli utenti non devono accedere a contenuti illegali, offensivi o inappropriati\n• Nessun download di materiale protetto da copyright senza autorizzazione\n• Le attività vietate includono hacking, spamming o compromissione della sicurezza della rete\n• Gli utenti sono responsabili della protezione dei propri dispositivi e dati",
-      privacySecurity: "Privacy e Sicurezza",
-      privacySecurityText: "• Questa è una rete aperta - gli utenti si connettono a proprio rischio\n• Consigliamo di utilizzare siti web HTTPS e servizi VPN per attività sensibili\n• La vostra attività internet può essere monitorata per scopi di sicurezza e conformità\n• Non garantiamo la privacy o la sicurezza della trasmissione dei vostri dati",
-      limitations: "Limitazioni",
-      limitationsText: "• Il servizio può essere interrotto o discontinuato senza preavviso\n• La larghezza di banda può essere limitata per garantire un uso equo per tutti gli utenti\n• Nextwi SARL non è responsabile per danni derivanti dall'uso del servizio\n• Non viene fornito supporto tecnico per la configurazione di dispositivi personali",
-      support: "Supporto",
-      supportText: "Per richieste o problemi tecnici, visitare il nostro portale di supporto: https://support.nextwi.co",
-      footer: "Utilizzando questo servizio, riconoscete di aver letto, compreso e accettato di essere vincolati da questi termini e condizioni.",
-      copyright: "© 2025 Nextwi SARL - Tutti i diritti riservati"
+      title: "Accordo per l'Uso del WiFi",
+      intro: "Connettendoti alla rete WiFi del Riad Alkemia, accetti i seguenti termini:",
+      acceptableUse: "1. Uso Accettabile",
+      acceptableUseText: "Il servizio WiFi è fornito solo per uso internet legittimo. Le attività vietate includono ma non sono limitate a download illegali, streaming di contenuti protetti da copyright e accesso a siti web inappropriati.",
+      dataPrivacy: "2. Privacy dei Dati",
+      dataPrivacyText: "Le tue informazioni personali saranno gestite in conformità con le leggi marocchine sulla privacy. Raccogliamo il minimo di dati necessari per l'accesso alla rete e i servizi agli ospiti.",
+      networkSecurity: "3. Sicurezza della Rete",
+      networkSecurityText: "Gli utenti sono responsabili della sicurezza del proprio dispositivo. Il Riad Alkemia non è responsabile per violazioni dei dati o problemi di sicurezza derivanti dall'uso del WiFi.",
+      serviceAvailability: "4. Disponibilità del Servizio",
+      serviceAvailabilityText: "Il servizio WiFi è fornito al meglio delle possibilità. Interruzioni del servizio possono verificarsi a causa di manutenzione o problemi tecnici."
     }
   },
   es: {
@@ -190,21 +175,16 @@ export const translations = {
       accessCodeHelp: "¿Necesitas un código de acceso? Contacta a recepción o revisa la información de tu habitación."
     },
     termsContent: {
-      title: "Términos y Condiciones - Servicio WiFi Gratuito",
-      subtitle: "Powered by Nextwi SARL",
-      intro: "Al conectarte a esta red WiFi gratuita, aceptas los siguientes términos:",
-      serviceUsage: "Uso del Servicio",
-      serviceUsageText: "• Este servicio WiFi se proporciona de forma gratuita para la comodidad de los huéspedes\n• El uso está limitado solo a actividades legales\n• La disponibilidad y velocidad del servicio no están garantizadas\n• El tiempo de conexión puede estar limitado durante las horas pico",
-      userResponsibilities: "Responsabilidades del Usuario",
-      userResponsibilitiesText: "• Los usuarios no deben acceder a contenido ilegal, ofensivo o inapropiado\n• No descargar material con derechos de autor sin autorización\n• Las actividades prohibidas incluyen hackeo, spam o comprometer la seguridad de la red\n• Los usuarios son responsables de proteger sus propios dispositivos y datos",
-      privacySecurity: "Privacidad y Seguridad",
-      privacySecurityText: "• Esta es una red abierta - los usuarios se conectan bajo su propio riesgo\n• Recomendamos usar sitios web HTTPS y servicios VPN para actividades sensibles\n• Su actividad de internet puede ser monitoreada por razones de seguridad y cumplimiento\n• No garantizamos la privacidad o seguridad de su transmisión de datos",
-      limitations: "Limitaciones",
-      limitationsText: "• El servicio puede ser interrumpido o discontinuado sin aviso\n• El ancho de banda puede estar limitado para asegurar un uso justo para todos los usuarios\n• Nextwi SARL no es responsable por daños resultantes del uso del servicio\n• No se proporciona soporte técnico para configuración de dispositivos personales",
-      support: "Soporte",
-      supportText: "Para solicitudes o problemas técnicos, visite nuestro portal de soporte: https://support.nextwi.co",
-      footer: "Al usar este servicio, reconoces que has leído, entendido y aceptado estar obligado por estos términos y condiciones.",
-      copyright: "© 2025 Nextwi SARL - Todos los derechos reservados"
+      title: "Acuerdo de Uso de WiFi",
+      intro: "Al conectarte a la red WiFi del Riad Alkemia, aceptas los siguientes términos:",
+      acceptableUse: "1. Uso Aceptable",
+      acceptableUseText: "El servicio WiFi se proporciona solo para uso legítimo de internet. Las actividades prohibidas incluyen pero no se limitan a descargas ilegales, streaming de contenido con derechos de autor y acceso a sitios web inapropiados.",
+      dataPrivacy: "2. Privacidad de Datos",
+      dataPrivacyText: "Tu información personal será manejada de acuerdo con las leyes de privacidad marroquíes. Recopilamos los datos mínimos necesarios para el acceso a la red y servicios a huéspedes.",
+      networkSecurity: "3. Seguridad de la Red",
+      networkSecurityText: "Los usuarios son responsables de la seguridad de su dispositivo. El Riad Alkemia no es responsable de violaciones de datos o problemas de seguridad que surjan del uso del WiFi.",
+      serviceAvailability: "4. Disponibilidad del Servicio",
+      serviceAvailabilityText: "El servicio WiFi se proporciona en la mejor medida posible. Las interrupciones del servicio pueden ocurrir debido a mantenimiento o problemas técnicos."
     }
   },
   de: {
@@ -242,21 +222,16 @@ export const translations = {
       accessCodeHelp: "Benötigen Sie einen Zugangscode? Kontaktieren Sie die Rezeption oder überprüfen Sie Ihre Zimmerinformationen."
     },
     termsContent: {
-      title: "Allgemeine Geschäftsbedingungen - Kostenloser WiFi-Service",
-      subtitle: "Powered by Nextwi SARL",
-      intro: "Durch die Verbindung mit diesem kostenlosen WiFi-Netzwerk stimmen Sie den folgenden Bedingungen zu:",
-      serviceUsage: "Service-Nutzung",
-      serviceUsageText: "• Dieser WiFi-Service wird kostenlos für die Bequemlichkeit der Gäste bereitgestellt\n• Die Nutzung ist nur auf rechtmäßige Aktivitäten beschränkt\n• Service-Verfügbarkeit und -Geschwindigkeit sind nicht garantiert\n• Die Verbindungszeit kann während der Stoßzeiten begrenzt sein",
-      userResponsibilities: "Benutzerverantwortlichkeiten",
-      userResponsibilitiesText: "• Benutzer dürfen nicht auf illegale, beleidigende oder unangemessene Inhalte zugreifen\n• Kein Herunterladen von urheberrechtlich geschütztem Material ohne Genehmigung\n• Verbotene Aktivitäten umfassen Hacking, Spamming oder die Gefährdung der Netzwerksicherheit\n• Benutzer sind für den Schutz ihrer eigenen Geräte und Daten verantwortlich",
-      privacySecurity: "Datenschutz und Sicherheit",
-      privacySecurityText: "• Dies ist ein offenes Netzwerk - Benutzer verbinden sich auf eigenes Risiko\n• Wir empfehlen die Verwendung von HTTPS-Websites und VPN-Diensten für sensible Aktivitäten\n• Ihre Internetaktivität kann zu Sicherheits- und Compliance-Zwecken überwacht werden\n• Wir garantieren nicht die Privatsphäre oder Sicherheit Ihrer Datenübertragung",
-      limitations: "Beschränkungen",
-      limitationsText: "• Der Service kann ohne Vorankündigung unterbrochen oder eingestellt werden\n• Die Bandbreite kann begrenzt sein, um eine faire Nutzung für alle Benutzer zu gewährleisten\n• Nextwi SARL haftet nicht für Schäden, die aus der Service-Nutzung resultieren\n• Es wird kein technischer Support für die Konfiguration persönlicher Geräte bereitgestellt",
-      support: "Support",
-      supportText: "Bei Anfragen oder technischen Problemen besuchen Sie bitte unser Support-Portal: https://support.nextwi.co",
-      footer: "Durch die Nutzung dieses Services bestätigen Sie, dass Sie diese Allgemeinen Geschäftsbedingungen gelesen, verstanden und akzeptiert haben.",
-      copyright: "© 2025 Nextwi SARL - Alle Rechte vorbehalten"
+      title: "WiFi-Nutzungsvereinbarung",
+      intro: "Durch die Verbindung mit dem WiFi-Netzwerk des Riad Alkemia stimmen Sie den folgenden Bedingungen zu:",
+      acceptableUse: "1. Akzeptable Nutzung",
+      acceptableUseText: "Der WiFi-Service wird nur für legitime Internet-Nutzung bereitgestellt. Verbotene Aktivitäten umfassen unter anderem illegale Downloads, Streaming von urheberrechtlich geschütztem Inhalt und Zugriff auf unangemessene Websites.",
+      dataPrivacy: "2. Datenschutz",
+      dataPrivacyText: "Ihre persönlichen Informationen werden in Übereinstimmung mit den marokkanischen Datenschutzgesetzen behandelt. Wir sammeln minimale notwendige Daten für Netzwerkzugang und Gästeservice.",
+      networkSecurity: "3. Netzwerksicherheit",
+      networkSecurityText: "Benutzer sind für die Sicherheit ihres Geräts verantwortlich. Das Riad Alkemia haftet nicht für Datenverletzungen oder Sicherheitsprobleme, die aus der WiFi-Nutzung entstehen.",
+      serviceAvailability: "4. Service-Verfügbarkeit",
+      serviceAvailabilityText: "Der WiFi-Service wird nach bestem Bemühen bereitgestellt. Service-Unterbrechungen können aufgrund von Wartung oder technischen Problemen auftreten."
     }
   }
 };
