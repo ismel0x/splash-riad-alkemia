@@ -23,6 +23,16 @@ export const translations = {
     enterEmail: "your.email@example.com",
     enterAccessCode: "Enter access code",
     enterWhatsapp: "+212 6XX XXX XXX",
+    helpContent: {
+      title: "How to Connect",
+      step1: "1. Fill in your details",
+      step1Text: "Enter your full name, email, WhatsApp number, and the access code provided by reception.",
+      step2: "2. Accept terms",
+      step2Text: "Read and accept our WiFi usage terms and conditions.",
+      step3: "3. Connect",
+      step3Text: "Click 'Connect to WiFi' and you'll be granted immediate access to our network.",
+      accessCodeHelp: "Need an access code? Contact reception or check your room information."
+    },
     termsContent: {
       title: "WiFi Usage Agreement",
       intro: "By connecting to the Riad Alkemia WiFi network, you agree to the following terms:",
@@ -60,6 +70,16 @@ export const translations = {
     enterEmail: "votre.email@exemple.com",
     enterAccessCode: "Entrez le code d'accès",
     enterWhatsapp: "+212 6XX XXX XXX",
+    helpContent: {
+      title: "Comment se connecter",
+      step1: "1. Remplissez vos informations",
+      step1Text: "Entrez votre nom complet, email, numéro WhatsApp et le code d'accès fourni par la réception.",
+      step2: "2. Acceptez les conditions",
+      step2Text: "Lisez et acceptez nos conditions d'utilisation du WiFi.",
+      step3: "3. Connectez-vous",
+      step3Text: "Cliquez sur 'Se Connecter au WiFi' et vous aurez un accès immédiat à notre réseau.",
+      accessCodeHelp: "Besoin d'un code d'accès ? Contactez la réception ou vérifiez les informations de votre chambre."
+    },
     termsContent: {
       title: "Accord d'Utilisation WiFi",
       intro: "En vous connectant au réseau WiFi du Riad Alkemia, vous acceptez les conditions suivantes :",
@@ -97,6 +117,16 @@ export const translations = {
     enterEmail: "tua.email@esempio.com",
     enterAccessCode: "Inserisci il codice di accesso",
     enterWhatsapp: "+212 6XX XXX XXX",
+    helpContent: {
+      title: "Come connettersi",
+      step1: "1. Compila i tuoi dati",
+      step1Text: "Inserisci il tuo nome completo, email, numero WhatsApp e il codice di accesso fornito dalla reception.",
+      step2: "2. Accetta i termini",
+      step2Text: "Leggi e accetta i nostri termini e condizioni per l'uso del WiFi.",
+      step3: "3. Connettiti",
+      step3Text: "Clicca su 'Connettiti al WiFi' e avrai accesso immediato alla nostra rete.",
+      accessCodeHelp: "Hai bisogno del codice di accesso? Contatta la reception o controlla le informazioni della tua camera."
+    },
     termsContent: {
       title: "Accordo per l'Uso del WiFi",
       intro: "Connettendoti alla rete WiFi del Riad Alkemia, accetti i seguenti termini:",
@@ -134,6 +164,16 @@ export const translations = {
     enterEmail: "tu.email@ejemplo.com",
     enterAccessCode: "Ingresa el código de acceso",
     enterWhatsapp: "+212 6XX XXX XXX",
+    helpContent: {
+      title: "Cómo conectarse",
+      step1: "1. Completa tus datos",
+      step1Text: "Ingresa tu nombre completo, email, número de WhatsApp y el código de acceso proporcionado por recepción.",
+      step2: "2. Acepta los términos",
+      step2Text: "Lee y acepta nuestros términos y condiciones de uso del WiFi.",
+      step3: "3. Conéctate",
+      step3Text: "Haz clic en 'Conectar al WiFi' y tendrás acceso inmediato a nuestra red.",
+      accessCodeHelp: "¿Necesitas un código de acceso? Contacta a recepción o revisa la información de tu habitación."
+    },
     termsContent: {
       title: "Acuerdo de Uso de WiFi",
       intro: "Al conectarte a la red WiFi del Riad Alkemia, aceptas los siguientes términos:",
@@ -171,6 +211,16 @@ export const translations = {
     enterEmail: "ihre.email@beispiel.com",
     enterAccessCode: "Geben Sie den Zugangscode ein",
     enterWhatsapp: "+212 6XX XXX XXX",
+    helpContent: {
+      title: "Wie man sich verbindet",
+      step1: "1. Geben Sie Ihre Daten ein",
+      step1Text: "Geben Sie Ihren vollständigen Namen, E-Mail, WhatsApp-Nummer und den von der Rezeption bereitgestellten Zugangscode ein.",
+      step2: "2. Bedingungen akzeptieren",
+      step2Text: "Lesen und akzeptieren Sie unsere WiFi-Nutzungsbedingungen.",
+      step3: "3. Verbinden",
+      step3Text: "Klicken Sie auf 'Mit WiFi verbinden' und Sie erhalten sofortigen Zugang zu unserem Netzwerk.",
+      accessCodeHelp: "Benötigen Sie einen Zugangscode? Kontaktieren Sie die Rezeption oder überprüfen Sie Ihre Zimmerinformationen."
+    },
     termsContent: {
       title: "WiFi-Nutzungsvereinbarung",
       intro: "Durch die Verbindung mit dem WiFi-Netzwerk des Riad Alkemia stimmen Sie den folgenden Bedingungen zu:",

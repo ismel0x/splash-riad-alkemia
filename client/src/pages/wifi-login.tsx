@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield } from "lucide-react";
+import { Wifi, Shield, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SuccessModal } from "@/components/success-modal";
 import { TermsModal } from "@/components/terms-modal";
+import { HelpModal } from "@/components/help-modal";
 import { apiRequest } from "@/lib/queryClient";
 import { insertWifiGuestSchema, type InsertWifiGuest } from "@shared/schema";
 import { translations, type Language } from "@/lib/i18n";
@@ -20,6 +21,7 @@ export default function WiFiLogin() {
   const [language, setLanguage] = useState<Language>("en");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const { toast } = useToast();
 
   const t = translations[language];
@@ -99,9 +101,15 @@ export default function WiFiLogin() {
             onLanguageChange={setLanguage}
           />
           
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-            <Wifi className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowHelpModal(true)}
+            className="w-8 h-8 p-0 bg-primary/10 hover:bg-primary/20 rounded-full flex items-center justify-center"
+            data-testid="button-help"
+          >
+            <HelpCircle className="h-4 w-4 text-primary" />
+          </Button>
         </div>
       </header>
 
@@ -312,6 +320,12 @@ export default function WiFiLogin() {
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
         onAccept={handleTermsAccept}
+        language={language}
+      />
+
+      <HelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
         language={language}
       />
     </div>
