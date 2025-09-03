@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, HelpCircle } from "lucide-react";
+import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,7 +34,7 @@ export default function WiFiLogin() {
       email: "",
       accessCode: "",
       whatsappNumber: "",
-      acceptedTerms: false,
+      acceptedTerms: true,
       language: language,
     },
   });
@@ -161,14 +161,17 @@ export default function WiFiLogin() {
                   <Label htmlFor="fullName" className="text-sm font-medium">
                     {t.fullName} <span className="text-destructive">*</span>
                   </Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder={t.enterFullName}
-                    {...form.register("fullName")}
-                    className="input-focus"
-                    data-testid="input-full-name"
-                  />
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder={t.enterFullName}
+                      {...form.register("fullName")}
+                      className="input-focus pl-10"
+                      data-testid="input-full-name"
+                    />
+                  </div>
                   {form.formState.errors.fullName && (
                     <p className="text-xs text-destructive" data-testid="error-full-name">
                       {form.formState.errors.fullName.message}
@@ -181,14 +184,17 @@ export default function WiFiLogin() {
                   <Label htmlFor="email" className="text-sm font-medium">
                     {t.email} <span className="text-destructive">*</span>
                   </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t.enterEmail}
-                    {...form.register("email")}
-                    className="input-focus"
-                    data-testid="input-email"
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder={t.enterEmail}
+                      {...form.register("email")}
+                      className="input-focus pl-10"
+                      data-testid="input-email"
+                    />
+                  </div>
                   {form.formState.errors.email && (
                     <p className="text-xs text-destructive" data-testid="error-email">
                       {form.formState.errors.email.message}
@@ -201,14 +207,17 @@ export default function WiFiLogin() {
                   <Label htmlFor="accessCode" className="text-sm font-medium">
                     {t.accessCode} <span className="text-destructive">*</span>
                   </Label>
-                  <Input
-                    id="accessCode"
-                    type="text"
-                    placeholder={t.enterAccessCode}
-                    {...form.register("accessCode")}
-                    className="input-focus font-mono tracking-wider"
-                    data-testid="input-access-code"
-                  />
+                  <div className="relative">
+                    <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="accessCode"
+                      type="text"
+                      placeholder={t.enterAccessCode}
+                      {...form.register("accessCode")}
+                      className="input-focus font-mono tracking-wider pl-10"
+                      data-testid="input-access-code"
+                    />
+                  </div>
                   {form.formState.errors.accessCode && (
                     <p className="text-xs text-destructive" data-testid="error-access-code">
                       {form.formState.errors.accessCode.message}
@@ -222,6 +231,7 @@ export default function WiFiLogin() {
                     {t.whatsappNumber} <span className="text-destructive">*</span>
                   </Label>
                   <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="whatsappNumber"
                       type="tel"
@@ -230,9 +240,6 @@ export default function WiFiLogin() {
                       className="input-focus pl-10"
                       data-testid="input-whatsapp"
                     />
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      📱
-                    </div>
                   </div>
                   {form.formState.errors.whatsappNumber && (
                     <p className="text-xs text-destructive" data-testid="error-whatsapp">
@@ -275,8 +282,8 @@ export default function WiFiLogin() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={registerMutation.isPending}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
+                  disabled={registerMutation.isPending || !form.watch("acceptedTerms")}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   data-testid="button-submit"
                 >
                   {registerMutation.isPending ? (
