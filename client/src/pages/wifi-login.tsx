@@ -211,7 +211,7 @@ export default function WiFiLogin() {
                     <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="accessCode"
-                      type="text"
+                      type="number"
                       placeholder={t.enterAccessCode}
                       {...form.register("accessCode")}
                       className="input-focus font-mono tracking-wider pl-10"
