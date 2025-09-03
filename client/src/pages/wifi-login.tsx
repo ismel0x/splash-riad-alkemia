@@ -302,14 +302,6 @@ export default function WiFiLogin() {
             </CardContent>
           </Card>
 
-          {/* Additional Information */}
-          <div className="text-center text-xs text-muted-foreground space-y-2">
-            <p data-testid="text-wifi-info">{t.freeWifiInfo}</p>
-            <div className="flex items-center justify-center space-x-4 text-primary">
-              <Shield className="h-4 w-4" />
-              <span data-testid="text-secure-connection">{t.secureConnection}</span>
-            </div>
-          </div>
         </div>
       </main>
 
