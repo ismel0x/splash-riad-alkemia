@@ -128,11 +128,7 @@ export default function WiFiLogin() {
               />
             </div>
             
-            <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="text-title">
-              {t.title}
-            </h1>
-            
-            <p className="text-muted-foreground text-sm" data-testid="text-subtitle">
+            <p className="text-muted-foreground text-lg" data-testid="text-subtitle">
               {t.subtitle}
             </p>
           </div>
