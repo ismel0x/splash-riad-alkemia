@@ -16,6 +16,7 @@ import { HelpModal } from "@/components/help-modal";
 import { apiRequest } from "@/lib/queryClient";
 import { insertWifiGuestSchema, type InsertWifiGuest } from "@shared/schema";
 import { translations, type Language } from "@/lib/i18n";
+import riadeImageUrl from "@assets/482041338_438478919276965_7460355980325748208_n_1756900518415.jpg";
 
 export default function WiFiLogin() {
   const [language, setLanguage] = useState<Language>("en");
@@ -118,8 +119,13 @@ export default function WiFiLogin() {
         <div className="w-full max-w-md">
           {/* Branding Section */}
           <div className="text-center mb-8">
-            <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden shadow-lg border-4 border-primary bg-primary/5 flex items-center justify-center">
-              <div className="text-4xl">🏛️</div>
+            <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden shadow-lg border-4 border-primary bg-primary/5">
+              <img 
+                src={riadeImageUrl} 
+                alt="Riad Alkemia"
+                className="w-full h-full object-cover"
+                data-testid="img-logo"
+              />
             </div>
             
             <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="text-title">
