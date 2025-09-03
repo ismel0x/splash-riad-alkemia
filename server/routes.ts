@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertWifiGuestSchema } from "@shared/schema";
 import { z } from "zod";
+import { validateFullNameWithCache } from "./openaiService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // WiFi guest registration endpoint
@@ -52,6 +53,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("WiFi registration error:", error);
       res.status(500).json({ 
         message: "Internal server error. Please try again." 
+      });
+    }
+  });
+
+  // Name validation endpoint using LLM
+  app.post("/api/validate/name", async (req, res) => {
+    try {
+      const { fullName } = req.body;
+      
+      if (!fullName || typeof fullName !== "string") {
+        return res.status(400).json({
+          message: "Full name is required"
+        });
+      }
+
+      const validation = await validateFullNameWithCache(fullName.trim());
+      
+      res.json({
+        success: true,
+        validation
+      });
+    } catch (error) {
+      console.error("Name validation error:", error);
+      
+      // Graceful fallback - don't block the user
+      res.json({
+        success: true,
+        validation: {
+          valid: true,
+          confidence: 0.5,
+          issues: ["Validation temporarily unavailable"]
+        }
       });
     }
   });

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone } from "lucide-react";
+import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ import { HelpModal } from "@/components/help-modal";
 import { apiRequest } from "@/lib/queryClient";
 import { insertWifiGuestSchema, type InsertWifiGuest } from "@shared/schema";
 import { translations, type Language } from "@/lib/i18n";
+import { useNameValidation } from "@/hooks/use-name-validation";
 import riadeImageUrl from "@assets/riad-alkemia-logo.png";
 
 export default function WiFiLogin() {
@@ -24,6 +25,7 @@ export default function WiFiLogin() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const { toast } = useToast();
+  const { validateName, isValidating, isValid: nameIsValid, confidence, suggestion, issues } = useNameValidation();
 
   const t = translations[language];
 
@@ -91,6 +93,17 @@ export default function WiFiLogin() {
     form.setValue("acceptedTerms", true);
     setShowTermsModal(false);
   };
+
+  // Debounced name validation
+  const handleNameValidation = useCallback((fullName: string) => {
+    if (fullName && fullName.length >= 4) {
+      // Delay validation by 1 second to avoid too many API calls
+      const timer = setTimeout(() => {
+        validateName(fullName);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [validateName]);
 
   return (
     <div className="min-h-screen bg-background moroccan-pattern">
@@ -163,15 +176,72 @@ export default function WiFiLogin() {
                       id="fullName"
                       type="text"
                       placeholder={t.enterFullName}
-                      {...form.register("fullName")}
-                      className="input-focus pl-10"
+                      {...form.register("fullName", {
+                        onChange: (e) => {
+                          handleNameValidation(e.target.value);
+                        }
+                      })}
+                      className={`input-focus pl-10 pr-10 ${
+                        nameIsValid && !isValidating && form.watch("fullName")?.length >= 4 
+                          ? 'border-green-500 focus:border-green-500' 
+                          : !nameIsValid && !isValidating && form.watch("fullName")?.length >= 4
+                            ? 'border-yellow-500 focus:border-yellow-500'
+                            : ''
+                      }`}
                       data-testid="input-full-name"
                     />
+                    {/* Validation Status Icon */}
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {isValidating ? (
+                        <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+                      ) : nameIsValid && form.watch("fullName")?.length >= 4 ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : !nameIsValid && form.watch("fullName")?.length >= 4 ? (
+                        <AlertCircle className="h-4 w-4 text-yellow-500" />
+                      ) : null}
+                    </div>
                   </div>
+                  
+                  {/* Form Validation Errors */}
                   {form.formState.errors.fullName && (
                     <p className="text-xs text-destructive" data-testid="error-full-name">
                       {form.formState.errors.fullName.message}
                     </p>
+                  )}
+                  
+                  {/* LLM Validation Feedback */}
+                  {!form.formState.errors.fullName && form.watch("fullName")?.length >= 4 && !isValidating && (
+                    <div className="space-y-1">
+                      {nameIsValid ? (
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="h-3 w-3 text-green-500" />
+                          <p className="text-xs text-green-600">
+                            Name looks good! {confidence && confidence > 0.8 ? `(${Math.round(confidence * 100)}% confidence)` : ''}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <AlertCircle className="h-3 w-3 text-yellow-500" />
+                            <p className="text-xs text-yellow-600">
+                              This name might need attention
+                            </p>
+                          </div>
+                          {suggestion && (
+                            <p className="text-xs text-muted-foreground ml-5">
+                              Did you mean: <span className="font-medium text-primary">{suggestion}</span>?
+                            </p>
+                          )}
+                          {issues && issues.length > 0 && (
+                            <ul className="text-xs text-muted-foreground ml-5 space-y-1">
+                              {issues.map((issue, index) => (
+                                <li key={index}>• {issue}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
 
