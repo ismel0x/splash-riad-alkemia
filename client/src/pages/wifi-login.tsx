@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -10,7 +10,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useEmailVerification } from "@/hooks/use-email-verification";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SuccessModal } from "@/components/success-modal";
 import { TermsModal } from "@/components/terms-modal";
@@ -28,7 +27,6 @@ export default function WiFiLogin() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const { toast } = useToast();
-  const { verifyEmail, isVerifying, lastVerification, clearVerification } = useEmailVerification();
 
   const t = translations[language];
 
@@ -47,6 +45,15 @@ export default function WiFiLogin() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: InsertWifiGuest) => {
+      // First verify email, then register
+      const emailResponse = await apiRequest("POST", "/api/verify-email", { email: data.email });
+      const emailVerification = await emailResponse.json();
+      
+      if (!emailVerification.isDeliverable) {
+        throw new Error(`Email verification failed: ${emailVerification.message || 'Invalid email address'}`);
+      }
+      
+      // If email is valid, proceed with registration
       const response = await apiRequest("POST", "/api/wifi/register", data);
       return response.json();
     },
@@ -81,7 +88,7 @@ export default function WiFiLogin() {
       } else {
         toast({
           title: "Error",
-          description: "Connection failed. Please try again.",
+          description: error.message || "Connection failed. Please try again.",
           variant: "destructive",
         });
       }
@@ -117,44 +124,7 @@ export default function WiFiLogin() {
     setShowTermsModal(false);
   };
 
-  // Email verification effect
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === 'email' && value.email && value.email.includes('@') && value.email.length > 5) {
-        const timeoutId = setTimeout(() => {
-          verifyEmail(value.email!);
-        }, 1000); // Debounce for 1 second
 
-        return () => clearTimeout(timeoutId);
-      } else if (name === 'email') {
-        clearVerification();
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [form, verifyEmail, clearVerification]);
-
-  // Get email verification status for UI
-  const getEmailVerificationStatus = () => {
-    const email = form.watch('email');
-    if (!email || !email.includes('@')) {
-      return null;
-    }
-
-    if (isVerifying) {
-      return { type: 'loading', message: 'Verifying email...', icon: Loader2 };
-    }
-
-    if (lastVerification && lastVerification.email === email) {
-      if (lastVerification.isDeliverable) {
-        return { type: 'success', message: 'Email verified', icon: CheckCircle };
-      } else {
-        return { type: 'error', message: lastVerification.message, icon: AlertCircle };
-      }
-    }
-
-    return null;
-  };
 
   // Get full name validation status for UI
   const getFullNameValidationStatus = () => {
@@ -450,36 +420,13 @@ export default function WiFiLogin() {
                         type="email"
                         placeholder={t.enterEmail}
                         {...form.register("email")}
-                        className={`input-focus pl-10 pr-10 ${
-                          getEmailVerificationStatus()?.type === 'success' ? 'border-green-500' :
-                          getEmailVerificationStatus()?.type === 'error' ? 'border-red-500' : ''
-                        }`}
+                        className="input-focus pl-10"
                         data-testid="input-email"
                       />
-                      {getEmailVerificationStatus() && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          {getEmailVerificationStatus()?.type === 'loading' && (
-                            <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
-                          )}
-                          {getEmailVerificationStatus()?.type === 'success' && (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          )}
-                          {getEmailVerificationStatus()?.type === 'error' && (
-                            <AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                        </div>
-                      )}
                     </div>
                     {form.formState.errors.email && (
                       <p className="text-xs text-destructive" data-testid="error-email">
                         {form.formState.errors.email.message}
-                      </p>
-                    )}
-                    {getEmailVerificationStatus() && getEmailVerificationStatus()?.type !== 'loading' && (
-                      <p className={`text-xs ${
-                        getEmailVerificationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
-                      }`} data-testid="email-verification-status">
-                        {getEmailVerificationStatus()?.message}
                       </p>
                     )}
                   </div>
@@ -615,8 +562,8 @@ export default function WiFiLogin() {
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
-                        <Check className="h-4 w-4" />
-                        <span>Review Details</span>
+                        <Wifi className="h-4 w-4" />
+                        <span>Connect to WiFi</span>
                       </div>
                     )}
                   </Button>
