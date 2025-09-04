@@ -189,6 +189,55 @@ export default function WiFiLogin() {
     };
   };
 
+  // Get WhatsApp number validation status for UI
+  const getWhatsappValidationStatus = () => {
+    const whatsappNumber = form.watch('whatsappNumber');
+    if (!whatsappNumber || whatsappNumber.length === 0) {
+      return null;
+    }
+
+    // Basic WhatsApp number validation: starts with +, followed by digits, 10-15 digits total
+    const whatsappPattern = /^\+[1-9]\d{9,14}$/;
+    const isValidFormat = whatsappPattern.test(whatsappNumber);
+    
+    if (!whatsappNumber.startsWith('+')) {
+      return { 
+        type: 'error', 
+        message: 'WhatsApp number must start with + (country code)', 
+        icon: AlertCircle 
+      };
+    }
+
+    if (!isValidFormat) {
+      const digitsOnly = whatsappNumber.replace(/^\+/, '');
+      if (digitsOnly.length < 10) {
+        return { 
+          type: 'error', 
+          message: 'WhatsApp number too short (minimum 10 digits)', 
+          icon: AlertCircle 
+        };
+      } else if (digitsOnly.length > 15) {
+        return { 
+          type: 'error', 
+          message: 'WhatsApp number too long (maximum 15 digits)', 
+          icon: AlertCircle 
+        };
+      } else if (!/^\d+$/.test(digitsOnly)) {
+        return { 
+          type: 'error', 
+          message: 'WhatsApp number should contain only digits after +', 
+          icon: AlertCircle 
+        };
+      }
+    }
+
+    return { 
+      type: 'success', 
+      message: 'Valid WhatsApp number format', 
+      icon: CheckCircle 
+    };
+  };
+
   return (
     <div className="min-h-screen bg-background moroccan-pattern">
       {/* Header with Language Switcher */}
@@ -394,13 +443,33 @@ export default function WiFiLogin() {
                         type="tel"
                         placeholder={t.enterWhatsapp}
                         {...form.register("whatsappNumber")}
-                        className="input-focus pl-10"
+                        className={`input-focus pl-10 pr-10 ${
+                          getWhatsappValidationStatus()?.type === 'success' ? 'border-green-500' :
+                          getWhatsappValidationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
                         data-testid="input-whatsapp"
                       />
+                      {getWhatsappValidationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getWhatsappValidationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getWhatsappValidationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
                     {form.formState.errors.whatsappNumber && (
                       <p className="text-xs text-destructive" data-testid="error-whatsapp">
                         {form.formState.errors.whatsappNumber.message}
+                      </p>
+                    )}
+                    {getWhatsappValidationStatus() && (
+                      <p className={`text-xs ${
+                        getWhatsappValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="whatsapp-validation-status">
+                        {getWhatsappValidationStatus()?.message}
                       </p>
                     )}
                   </div>
