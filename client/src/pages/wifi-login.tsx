@@ -23,6 +23,7 @@ export default function WiFiLogin() {
   const [language, setLanguage] = useState<Language>("en");
   const [currentStep, setCurrentStep] = useState<'form' | 'confirmation'>('form');
   const [formData, setFormData] = useState<InsertWifiGuest | null>(null);
+  const [emailVerificationResult, setEmailVerificationResult] = useState<{email: string, isDeliverable: boolean} | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -48,6 +49,12 @@ export default function WiFiLogin() {
       // First verify email, then register
       const emailResponse = await apiRequest("POST", "/api/verify-email", { email: data.email });
       const emailVerification = await emailResponse.json();
+      
+      // Store verification result for confirmation page display
+      setEmailVerificationResult({
+        email: data.email,
+        isDeliverable: emailVerification.isDeliverable
+      });
       
       if (!emailVerification.isDeliverable) {
         throw new Error(`Email verification failed: ${emailVerification.message || 'Invalid email address'}`);
@@ -650,28 +657,28 @@ export default function WiFiLogin() {
 
                     {/* Email */}
                     <div className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      formData?.email && !isEmailFormatValid(formData.email) 
+                      emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
                         ? 'bg-red-50 border border-red-200' 
                         : 'bg-muted/30'
                     }`}>
-                      {formData?.email && !isEmailFormatValid(formData.email) ? (
+                      {emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable ? (
                         <X className="h-5 w-5 text-red-500" />
                       ) : (
                         <Mail className="h-5 w-5 text-primary" />
                       )}
                       <div className="flex-1">
                         <p className={`text-sm font-medium ${
-                          formData?.email && !isEmailFormatValid(formData.email) 
+                          emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
                             ? 'text-red-600' 
                             : 'text-muted-foreground'
                         }`}>{t.email}</p>
                         <p className={`text-base font-semibold ${
-                          formData?.email && !isEmailFormatValid(formData.email) 
+                          emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
                             ? 'text-red-700' 
                             : ''
                         }`} data-testid="confirm-email">{formData?.email}</p>
-                        {formData?.email && !isEmailFormatValid(formData.email) && (
-                          <p className="text-xs text-red-600 mt-1">⚠️ Invalid email format</p>
+                        {emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable && (
+                          <p className="text-xs text-red-600 mt-1">⚠️ Email address not deliverable</p>
                         )}
                       </div>
                     </div>
