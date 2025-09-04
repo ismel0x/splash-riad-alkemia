@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check, AlertCircle, CheckCircle, Loader2, UserCheck, Users } from "lucide-react";
+import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check, AlertCircle, CheckCircle, Loader2, UserCheck, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -655,7 +655,7 @@ export default function WiFiLogin() {
                         : 'bg-muted/30'
                     }`}>
                       {formData?.email && !isEmailFormatValid(formData.email) ? (
-                        <AlertCircle className="h-5 w-5 text-red-500" />
+                        <X className="h-5 w-5 text-red-500" />
                       ) : (
                         <Mail className="h-5 w-5 text-primary" />
                       )}
