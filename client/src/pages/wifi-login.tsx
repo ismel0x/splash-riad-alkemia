@@ -21,9 +21,7 @@ import riadeImageUrl from "@assets/riad-alkemia-logo.png";
 
 export default function WiFiLogin() {
   const [language, setLanguage] = useState<Language>("en");
-  const [currentStep, setCurrentStep] = useState<'form' | 'confirmation'>('form');
-  const [formData, setFormData] = useState<InsertWifiGuest | null>(null);
-  const [emailVerificationResult, setEmailVerificationResult] = useState<{email: string, isDeliverable: boolean} | null>(null);
+  const [emailValidationError, setEmailValidationError] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -46,17 +44,16 @@ export default function WiFiLogin() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: InsertWifiGuest) => {
+      // Clear previous email validation error
+      setEmailValidationError(null);
+      
       // First verify email, then register
       const emailResponse = await apiRequest("POST", "/api/verify-email", { email: data.email });
       const emailVerification = await emailResponse.json();
       
-      // Store verification result for confirmation page display
-      setEmailVerificationResult({
-        email: data.email,
-        isDeliverable: emailVerification.isDeliverable
-      });
-      
       if (!emailVerification.isDeliverable) {
+        // Set email validation error to highlight the field
+        setEmailValidationError(emailVerification.message || 'Email address not deliverable');
         throw new Error(`Email verification failed: ${emailVerification.message || 'Invalid email address'}`);
       }
       
@@ -66,8 +63,7 @@ export default function WiFiLogin() {
     },
     onSuccess: () => {
       setShowSuccessModal(true);
-      setCurrentStep('form');
-      setFormData(null);
+      setEmailValidationError(null);
       form.reset();
     },
     onError: (error: any) => {
@@ -108,22 +104,7 @@ export default function WiFiLogin() {
       language,
     };
     
-    if (currentStep === 'form') {
-      setFormData(submissionData);
-      setCurrentStep('confirmation');
-    } else {
-      registerMutation.mutate(submissionData);
-    }
-  };
-
-  const handleBackToForm = () => {
-    setCurrentStep('form');
-  };
-
-  const handleConfirmSubmission = () => {
-    if (formData) {
-      registerMutation.mutate(formData);
-    }
+    registerMutation.mutate(submissionData);
   };
 
   const handleTermsAccept = () => {
@@ -335,43 +316,22 @@ export default function WiFiLogin() {
           {/* Form/Confirmation Card */}
           <Card className="form-container bg-card/95 backdrop-blur-sm shadow-lg mb-4">
             <CardContent className="p-6">
-              {/* Header with Back Button (only on confirmation step) */}
-              {currentStep === 'confirmation' && (
-                <div className="flex items-center mb-6 pb-4 border-b border-border">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleBackToForm}
-                    className="flex items-center space-x-2 p-2 hover:bg-primary/10"
-                    data-testid="button-back"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Back</span>
-                  </Button>
-                </div>
-              )}
-
               {/* WiFi Access Header */}
               <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-border">
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  {currentStep === 'form' ? (
-                    <Wifi className="h-5 w-5 text-primary" />
-                  ) : (
-                    <Check className="h-5 w-5 text-primary" />
-                  )}
+                  <Wifi className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h2 className="font-semibold text-foreground" data-testid="text-wifi-access">
-                    {currentStep === 'form' ? t.wifiAccess : 'Confirm Details'}
+                    {t.wifiAccess}
                   </h2>
                   <p className="text-xs text-muted-foreground" data-testid="text-connect-message">
-                    {currentStep === 'form' ? t.connectMessage : 'Please review your information before connecting'}
+                    {t.connectMessage}
                   </p>
                 </div>
               </div>
 
-              {currentStep === 'form' ? (
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   {/* Title Field */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">
@@ -461,17 +421,19 @@ export default function WiFiLogin() {
                         placeholder={t.enterEmail}
                         {...form.register("email")}
                         className={`input-focus pl-10 pr-10 ${
+                          emailValidationError ? 'border-red-500 bg-red-50' :
                           getEmailFormatValidationStatus()?.type === 'success' ? 'border-green-500' :
                           getEmailFormatValidationStatus()?.type === 'error' ? 'border-red-500' : ''
                         }`}
                         data-testid="input-email"
                       />
-                      {getEmailFormatValidationStatus() && (
+                      {(getEmailFormatValidationStatus() || emailValidationError) && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          {getEmailFormatValidationStatus()?.type === 'success' && (
+                          {emailValidationError ? (
+                            <X className="h-4 w-4 text-red-500" />
+                          ) : getEmailFormatValidationStatus()?.type === 'success' ? (
                             <CheckCircle className="h-4 w-4 text-green-500" />
-                          )}
-                          {getEmailFormatValidationStatus()?.type === 'error' && (
+                          ) : (
                             <AlertCircle className="h-4 w-4 text-red-500" />
                           )}
                         </div>
@@ -482,7 +444,11 @@ export default function WiFiLogin() {
                         {form.formState.errors.email.message}
                       </p>
                     )}
-                    {getEmailFormatValidationStatus() && (
+                    {emailValidationError ? (
+                      <p className="text-xs text-red-600" data-testid="email-validation-error">
+                        ⚠️ {emailValidationError}
+                      </p>
+                    ) : getEmailFormatValidationStatus() && (
                       <p className={`text-xs ${
                         getEmailFormatValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
                       }`} data-testid="email-format-validation-status">
@@ -628,101 +594,6 @@ export default function WiFiLogin() {
                     )}
                   </Button>
                 </form>
-              ) : (
-                /* Confirmation Step */
-                <div className="space-y-6">
-                  {/* Confirmation Details */}
-                  <div className="space-y-4">
-                    {/* Title */}
-                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                      {formData?.title === 'Mr' ? (
-                        <UserCheck className="h-5 w-5 text-primary" />
-                      ) : (
-                        <Users className="h-5 w-5 text-primary" />
-                      )}
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground">Title</p>
-                        <p className="text-base font-semibold" data-testid="confirm-title">{formData?.title}</p>
-                      </div>
-                    </div>
-
-                    {/* Full Name */}
-                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                      <User className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground">{t.fullName}</p>
-                        <p className="text-base font-semibold" data-testid="confirm-full-name">{formData?.title} {formData?.fullName}</p>
-                      </div>
-                    </div>
-
-                    {/* Email */}
-                    <div className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
-                        ? 'bg-red-50 border border-red-200' 
-                        : 'bg-muted/30'
-                    }`}>
-                      {emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable ? (
-                        <X className="h-5 w-5 text-red-500" />
-                      ) : (
-                        <Mail className="h-5 w-5 text-primary" />
-                      )}
-                      <div className="flex-1">
-                        <p className={`text-sm font-medium ${
-                          emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
-                            ? 'text-red-600' 
-                            : 'text-muted-foreground'
-                        }`}>{t.email}</p>
-                        <p className={`text-base font-semibold ${
-                          emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable
-                            ? 'text-red-700' 
-                            : ''
-                        }`} data-testid="confirm-email">{formData?.email}</p>
-                        {emailVerificationResult && emailVerificationResult.email === formData?.email && !emailVerificationResult.isDeliverable && (
-                          <p className="text-xs text-red-600 mt-1">⚠️ Email address not deliverable</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Access Code */}
-                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                      <Key className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground">{t.accessCode}</p>
-                        <p className="text-base font-semibold font-mono" data-testid="confirm-access-code">{formData?.accessCode}</p>
-                      </div>
-                    </div>
-
-                    {/* WhatsApp Number */}
-                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                      <Phone className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground">{t.whatsappNumber}</p>
-                        <p className="text-base font-semibold" data-testid="confirm-whatsapp">{formData?.whatsappNumber}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Confirm Button */}
-                  <Button
-                    onClick={handleConfirmSubmission}
-                    disabled={registerMutation.isPending}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
-                    data-testid="button-confirm"
-                  >
-                    {registerMutation.isPending ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                        <span>{t.connecting}</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <Wifi className="h-4 w-4" />
-                        <span>{t.connectToWifi}</span>
-                      </div>
-                    )}
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
 
