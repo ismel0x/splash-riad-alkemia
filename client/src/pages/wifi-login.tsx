@@ -316,7 +316,7 @@ export default function WiFiLogin() {
                         type="number"
                         placeholder={t.enterAccessCode}
                         {...form.register("accessCode")}
-                        className="input-focus font-mono tracking-wider pl-10"
+                        className="input-focus tracking-wider pl-10"
                         data-testid="input-access-code"
                       />
                     </div>
