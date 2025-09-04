@@ -4,7 +4,76 @@ import { storage } from "./storage";
 import { insertWifiGuestSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Verimail email verification function
+async function verifyEmailWithVerimail(email: string): Promise<{
+  isValid: boolean;
+  isDeliverable: boolean;
+  result: string;
+  error?: string;
+}> {
+  const apiKey = process.env.VERIMAIL_API_KEY;
+  
+  if (!apiKey) {
+    return {
+      isValid: false,
+      isDeliverable: false,
+      result: "error",
+      error: "Verimail API key not configured"
+    };
+  }
+
+  try {
+    const response = await fetch(`https://api.verimail.io/v3/verify?email=${encodeURIComponent(email)}&key=${apiKey}`);
+    const data = await response.json();
+
+    return {
+      isValid: response.ok && data.status === "success",
+      isDeliverable: data.deliverable === true,
+      result: data.result || "unknown",
+      error: !response.ok ? data.message || "Verification failed" : undefined
+    };
+  } catch (error) {
+    console.error("Verimail verification error:", error);
+    return {
+      isValid: false,
+      isDeliverable: false,
+      result: "error",
+      error: "Email verification service unavailable"
+    };
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Email verification endpoint
+  app.post("/api/verify-email", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || typeof email !== 'string') {
+        return res.status(400).json({
+          message: "Email is required",
+          isValid: false
+        });
+      }
+
+      const verification = await verifyEmailWithVerimail(email);
+      
+      res.json({
+        email,
+        isValid: verification.isValid,
+        isDeliverable: verification.isDeliverable,
+        result: verification.result,
+        message: verification.error || (verification.isDeliverable ? "Email is valid and deliverable" : "Email may not be deliverable")
+      });
+    } catch (error) {
+      console.error("Email verification endpoint error:", error);
+      res.status(500).json({
+        message: "Email verification service unavailable",
+        isValid: false
+      });
+    }
+  });
+
   // WiFi guest registration endpoint
   app.post("/api/wifi/register", async (req, res) => {
     try {
@@ -16,6 +85,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ 
           message: "Invalid access code. Please check with reception.",
           field: "accessCode"
+        });
+      }
+
+      // Verify email with Verimail
+      const emailVerification = await verifyEmailWithVerimail(validatedData.email);
+      if (!emailVerification.isValid || !emailVerification.isDeliverable) {
+        return res.status(400).json({
+          message: emailVerification.error || "Please enter a valid email address that can receive emails.",
+          field: "email"
         });
       }
 

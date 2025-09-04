@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check } from "lucide-react";
+import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useEmailVerification } from "@/hooks/use-email-verification";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SuccessModal } from "@/components/success-modal";
 import { TermsModal } from "@/components/terms-modal";
@@ -26,6 +27,7 @@ export default function WiFiLogin() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const { toast } = useToast();
+  const { verifyEmail, isVerifying, lastVerification, clearVerification } = useEmailVerification();
 
   const t = translations[language];
 
@@ -111,6 +113,45 @@ export default function WiFiLogin() {
   const handleTermsAccept = () => {
     form.setValue("acceptedTerms", true);
     setShowTermsModal(false);
+  };
+
+  // Email verification effect
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'email' && value.email && value.email.includes('@') && value.email.length > 5) {
+        const timeoutId = setTimeout(() => {
+          verifyEmail(value.email!);
+        }, 1000); // Debounce for 1 second
+
+        return () => clearTimeout(timeoutId);
+      } else if (name === 'email') {
+        clearVerification();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, verifyEmail, clearVerification]);
+
+  // Get email verification status for UI
+  const getEmailVerificationStatus = () => {
+    const email = form.watch('email');
+    if (!email || !email.includes('@')) {
+      return null;
+    }
+
+    if (isVerifying) {
+      return { type: 'loading', message: 'Verifying email...', icon: Loader2 };
+    }
+
+    if (lastVerification && lastVerification.email === email) {
+      if (lastVerification.isDeliverable) {
+        return { type: 'success', message: 'Email verified', icon: CheckCircle };
+      } else {
+        return { type: 'error', message: lastVerification.message, icon: AlertCircle };
+      }
+    }
+
+    return null;
   };
 
   return (
@@ -229,13 +270,36 @@ export default function WiFiLogin() {
                         type="email"
                         placeholder={t.enterEmail}
                         {...form.register("email")}
-                        className="input-focus pl-10"
+                        className={`input-focus pl-10 pr-10 ${
+                          getEmailVerificationStatus()?.type === 'success' ? 'border-green-500' :
+                          getEmailVerificationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
                         data-testid="input-email"
                       />
+                      {getEmailVerificationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getEmailVerificationStatus()?.type === 'loading' && (
+                            <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+                          )}
+                          {getEmailVerificationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getEmailVerificationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
                     {form.formState.errors.email && (
                       <p className="text-xs text-destructive" data-testid="error-email">
                         {form.formState.errors.email.message}
+                      </p>
+                    )}
+                    {getEmailVerificationStatus() && getEmailVerificationStatus()?.type !== 'loading' && (
+                      <p className={`text-xs ${
+                        getEmailVerificationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="email-verification-status">
+                        {getEmailVerificationStatus()?.message}
                       </p>
                     )}
                   </div>
