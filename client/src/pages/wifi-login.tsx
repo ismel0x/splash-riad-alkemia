@@ -35,7 +35,7 @@ export default function WiFiLogin() {
   const form = useForm<InsertWifiGuest>({
     resolver: zodResolver(insertWifiGuestSchema),
     defaultValues: {
-      title: "Mr" as "Mr" | "Mrs",
+      title: undefined,
       fullName: "",
       email: "",
       accessCode: "",
