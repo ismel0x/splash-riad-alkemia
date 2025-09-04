@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Wifi, Shield, HelpCircle, User, Mail, Key, Phone, ArrowLeft, Check, AlertCircle, CheckCircle, Loader2, UserCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useEmailVerification } from "@/hooks/use-email-verification";
@@ -34,6 +35,7 @@ export default function WiFiLogin() {
   const form = useForm<InsertWifiGuest>({
     resolver: zodResolver(insertWifiGuestSchema),
     defaultValues: {
+      title: "Mr" as "Mr" | "Mrs",
       fullName: "",
       email: "",
       accessCode: "",
@@ -360,6 +362,39 @@ export default function WiFiLogin() {
 
               {currentStep === 'form' ? (
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  {/* Title Field */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">
+                      Title <span className="text-destructive">*</span>
+                    </Label>
+                    <RadioGroup
+                      value={form.watch("title")}
+                      onValueChange={(value) => form.setValue("title", value as "Mr" | "Mrs")}
+                      className="flex gap-6"
+                      data-testid="radio-group-title"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Mr" id="mr" data-testid="radio-mr" />
+                        <Label htmlFor="mr" className="flex items-center space-x-2 cursor-pointer">
+                          <UserCheck className="h-4 w-4 text-muted-foreground" />
+                          <span>Mr</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Mrs" id="mrs" data-testid="radio-mrs" />
+                        <Label htmlFor="mrs" className="flex items-center space-x-2 cursor-pointer">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span>Mrs</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                    {form.formState.errors.title && (
+                      <p className="text-xs text-destructive" data-testid="error-title">
+                        {form.formState.errors.title.message}
+                      </p>
+                    )}
+                  </div>
+
                   {/* Full Name Field */}
                   <div className="space-y-2">
                     <Label htmlFor="fullName" className="text-sm font-medium">
@@ -591,12 +626,25 @@ export default function WiFiLogin() {
                 <div className="space-y-6">
                   {/* Confirmation Details */}
                   <div className="space-y-4">
+                    {/* Title */}
+                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
+                      {formData?.title === 'Mr' ? (
+                        <UserCheck className="h-5 w-5 text-primary" />
+                      ) : (
+                        <Users className="h-5 w-5 text-primary" />
+                      )}
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground">Title</p>
+                        <p className="text-base font-semibold" data-testid="confirm-title">{formData?.title}</p>
+                      </div>
+                    </div>
+
                     {/* Full Name */}
                     <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
                       <User className="h-5 w-5 text-primary" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-muted-foreground">{t.fullName}</p>
-                        <p className="text-base font-semibold" data-testid="confirm-full-name">{formData?.fullName}</p>
+                        <p className="text-base font-semibold" data-testid="confirm-full-name">{formData?.title} {formData?.fullName}</p>
                       </div>
                     </div>
 

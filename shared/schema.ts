@@ -5,6 +5,7 @@ import { z } from "zod";
 
 export const wifiGuests = pgTable("wifi_guests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull(),
   accessCode: text("access_code").notNull(),
@@ -15,6 +16,7 @@ export const wifiGuests = pgTable("wifi_guests", {
 });
 
 export const insertWifiGuestSchema = createInsertSchema(wifiGuests).pick({
+  title: true,
   fullName: true,
   email: true,
   accessCode: true,
@@ -22,6 +24,7 @@ export const insertWifiGuestSchema = createInsertSchema(wifiGuests).pick({
   acceptedTerms: true,
   language: true,
 }).extend({
+  title: z.enum(["Mr", "Mrs"], { required_error: "Please select Mr or Mrs" }),
   email: z.string().email("Please enter a valid email address"),
   fullName: z.string()
     .min(4, "Full name must be at least 4 characters")
