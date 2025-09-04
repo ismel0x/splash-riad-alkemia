@@ -217,6 +217,13 @@ export default function WiFiLogin() {
     };
   };
 
+  // Helper function to check email format validity
+  const isEmailFormatValid = (email: string) => {
+    if (!email || email.length === 0) return true; // Empty is considered valid for display
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
   // Get email format validation status for UI
   const getEmailFormatValidationStatus = () => {
     const email = form.watch('email');
@@ -642,11 +649,30 @@ export default function WiFiLogin() {
                     </div>
 
                     {/* Email */}
-                    <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                      <Mail className="h-5 w-5 text-primary" />
+                    <div className={`flex items-center space-x-3 p-3 rounded-lg ${
+                      formData?.email && !isEmailFormatValid(formData.email) 
+                        ? 'bg-red-50 border border-red-200' 
+                        : 'bg-muted/30'
+                    }`}>
+                      {formData?.email && !isEmailFormatValid(formData.email) ? (
+                        <AlertCircle className="h-5 w-5 text-red-500" />
+                      ) : (
+                        <Mail className="h-5 w-5 text-primary" />
+                      )}
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground">{t.email}</p>
-                        <p className="text-base font-semibold" data-testid="confirm-email">{formData?.email}</p>
+                        <p className={`text-sm font-medium ${
+                          formData?.email && !isEmailFormatValid(formData.email) 
+                            ? 'text-red-600' 
+                            : 'text-muted-foreground'
+                        }`}>{t.email}</p>
+                        <p className={`text-base font-semibold ${
+                          formData?.email && !isEmailFormatValid(formData.email) 
+                            ? 'text-red-700' 
+                            : ''
+                        }`} data-testid="confirm-email">{formData?.email}</p>
+                        {formData?.email && !isEmailFormatValid(formData.email) && (
+                          <p className="text-xs text-red-600 mt-1">⚠️ Invalid email format</p>
+                        )}
                       </div>
                     </div>
 
