@@ -154,6 +154,41 @@ export default function WiFiLogin() {
     return null;
   };
 
+  // Get full name validation status for UI
+  const getFullNameValidationStatus = () => {
+    const fullName = form.watch('fullName');
+    if (!fullName || fullName.length === 0) {
+      return null;
+    }
+
+    // Check if name contains only alphabetic characters and spaces
+    const namePattern = /^[a-zA-ZÀ-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s'-]+$/;
+    const isValidFormat = namePattern.test(fullName);
+    const hasValidLength = fullName.length >= 4 && fullName.length <= 30;
+
+    if (!isValidFormat) {
+      return { 
+        type: 'error', 
+        message: 'Name should contain only letters, spaces, hyphens, and apostrophes', 
+        icon: AlertCircle 
+      };
+    }
+
+    if (!hasValidLength) {
+      return { 
+        type: 'error', 
+        message: fullName.length < 4 ? 'Name too short (minimum 4 characters)' : 'Name too long (maximum 30 characters)', 
+        icon: AlertCircle 
+      };
+    }
+
+    return { 
+      type: 'success', 
+      message: 'Valid name format', 
+      icon: CheckCircle 
+    };
+  };
+
   return (
     <div className="min-h-screen bg-background moroccan-pattern">
       {/* Header with Language Switcher */}
@@ -247,13 +282,33 @@ export default function WiFiLogin() {
                         type="text"
                         placeholder={t.enterFullName}
                         {...form.register("fullName")}
-                        className="input-focus pl-10"
+                        className={`input-focus pl-10 pr-10 ${
+                          getFullNameValidationStatus()?.type === 'success' ? 'border-green-500' :
+                          getFullNameValidationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
                         data-testid="input-full-name"
                       />
+                      {getFullNameValidationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getFullNameValidationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getFullNameValidationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
                     {form.formState.errors.fullName && (
                       <p className="text-xs text-destructive" data-testid="error-full-name">
                         {form.formState.errors.fullName.message}
+                      </p>
+                    )}
+                    {getFullNameValidationStatus() && (
+                      <p className={`text-xs ${
+                        getFullNameValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="fullname-validation-status">
+                        {getFullNameValidationStatus()?.message}
                       </p>
                     )}
                   </div>
