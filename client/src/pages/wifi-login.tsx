@@ -245,6 +245,40 @@ export default function WiFiLogin() {
     };
   };
 
+  // Get access code validation status for UI
+  const getAccessCodeValidationStatus = () => {
+    const accessCode = form.watch('accessCode');
+    if (!accessCode || accessCode.length === 0) {
+      return null;
+    }
+
+    // Access code validation: numbers only, 6-9 digits
+    const isNumericOnly = /^\d+$/.test(accessCode);
+    const hasValidLength = accessCode.length >= 6 && accessCode.length <= 9;
+
+    if (!isNumericOnly) {
+      return { 
+        type: 'error', 
+        message: 'Access code should contain only numbers', 
+        icon: AlertCircle 
+      };
+    }
+
+    if (!hasValidLength) {
+      return { 
+        type: 'error', 
+        message: accessCode.length < 6 ? 'Access code too short (minimum 6 digits)' : 'Access code too long (maximum 9 digits)', 
+        icon: AlertCircle 
+      };
+    }
+
+    return { 
+      type: 'success', 
+      message: 'Format correct - code will be verified on connection request', 
+      icon: CheckCircle 
+    };
+  };
+
   return (
     <div className="min-h-screen bg-background moroccan-pattern">
       {/* Header with Language Switcher */}
@@ -427,13 +461,33 @@ export default function WiFiLogin() {
                         type="number"
                         placeholder={t.enterAccessCode}
                         {...form.register("accessCode")}
-                        className="input-focus tracking-wider pl-10"
+                        className={`input-focus tracking-wider pl-10 pr-10 ${
+                          getAccessCodeValidationStatus()?.type === 'success' ? 'border-green-500' :
+                          getAccessCodeValidationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
                         data-testid="input-access-code"
                       />
+                      {getAccessCodeValidationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getAccessCodeValidationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getAccessCodeValidationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
                     {form.formState.errors.accessCode && (
                       <p className="text-xs text-destructive" data-testid="error-access-code">
                         {form.formState.errors.accessCode.message}
+                      </p>
+                    )}
+                    {getAccessCodeValidationStatus() && (
+                      <p className={`text-xs ${
+                        getAccessCodeValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="access-code-validation-status">
+                        {getAccessCodeValidationStatus()?.message}
                       </p>
                     )}
                   </div>
