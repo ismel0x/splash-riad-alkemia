@@ -217,6 +217,32 @@ export default function WiFiLogin() {
     };
   };
 
+  // Get email format validation status for UI
+  const getEmailFormatValidationStatus = () => {
+    const email = form.watch('email');
+    if (!email || email.length === 0) {
+      return null;
+    }
+
+    // Basic email format validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidFormat = emailPattern.test(email);
+
+    if (!isValidFormat) {
+      return { 
+        type: 'error', 
+        message: 'Please enter a valid email format', 
+        icon: AlertCircle 
+      };
+    }
+
+    return { 
+      type: 'success', 
+      message: 'Valid email format', 
+      icon: CheckCircle 
+    };
+  };
+
   // Get access code validation status for UI
   const getAccessCodeValidationStatus = () => {
     const accessCode = form.watch('accessCode');
@@ -420,13 +446,33 @@ export default function WiFiLogin() {
                         type="email"
                         placeholder={t.enterEmail}
                         {...form.register("email")}
-                        className="input-focus pl-10"
+                        className={`input-focus pl-10 pr-10 ${
+                          getEmailFormatValidationStatus()?.type === 'success' ? 'border-green-500' :
+                          getEmailFormatValidationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
                         data-testid="input-email"
                       />
+                      {getEmailFormatValidationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getEmailFormatValidationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getEmailFormatValidationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
                     {form.formState.errors.email && (
                       <p className="text-xs text-destructive" data-testid="error-email">
                         {form.formState.errors.email.message}
+                      </p>
+                    )}
+                    {getEmailFormatValidationStatus() && (
+                      <p className={`text-xs ${
+                        getEmailFormatValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="email-format-validation-status">
+                        {getEmailFormatValidationStatus()?.message}
                       </p>
                     )}
                   </div>
