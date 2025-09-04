@@ -196,20 +196,21 @@ export default function WiFiLogin() {
       return null;
     }
 
-    // Basic WhatsApp number validation: starts with +, followed by digits, 10-15 digits total
-    const whatsappPattern = /^\+[1-9]\d{9,14}$/;
-    const isValidFormat = whatsappPattern.test(whatsappNumber);
+    // WhatsApp number validation: starts with + or 00, followed by digits, 10-15 digits total
+    const whatsappPatternPlus = /^\+[1-9]\d{9,14}$/;
+    const whatsappPatternDoubleZero = /^00[1-9]\d{9,14}$/;
+    const isValidFormat = whatsappPatternPlus.test(whatsappNumber) || whatsappPatternDoubleZero.test(whatsappNumber);
     
-    if (!whatsappNumber.startsWith('+')) {
+    if (!whatsappNumber.startsWith('+') && !whatsappNumber.startsWith('00')) {
       return { 
         type: 'error', 
-        message: 'WhatsApp number must start with + (country code)', 
+        message: 'WhatsApp number must start with + or 00 (country code)', 
         icon: AlertCircle 
       };
     }
 
     if (!isValidFormat) {
-      const digitsOnly = whatsappNumber.replace(/^\+/, '');
+      const digitsOnly = whatsappNumber.replace(/^(\+|00)/, '');
       if (digitsOnly.length < 10) {
         return { 
           type: 'error', 
@@ -225,7 +226,13 @@ export default function WiFiLogin() {
       } else if (!/^\d+$/.test(digitsOnly)) {
         return { 
           type: 'error', 
-          message: 'WhatsApp number should contain only digits after +', 
+          message: 'WhatsApp number should contain only digits after prefix', 
+          icon: AlertCircle 
+        };
+      } else if (digitsOnly.startsWith('0')) {
+        return { 
+          type: 'error', 
+          message: 'Country code cannot start with 0', 
           icon: AlertCircle 
         };
       }
