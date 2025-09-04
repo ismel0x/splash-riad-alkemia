@@ -354,14 +354,14 @@ export default function WiFiLogin() {
                         <RadioGroupItem value="Mr" id="mr" data-testid="radio-mr" />
                         <Label htmlFor="mr" className="flex items-center space-x-2 cursor-pointer">
                           <UserCheck className="h-4 w-4 text-muted-foreground" />
-                          <span>Mr</span>
+                          <span>{t.mr}</span>
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Mrs" id="mrs" data-testid="radio-mrs" />
                         <Label htmlFor="mrs" className="flex items-center space-x-2 cursor-pointer">
                           <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>Mrs</span>
+                          <span>{t.mrs}</span>
                         </Label>
                       </div>
                     </RadioGroup>
@@ -453,7 +453,7 @@ export default function WiFiLogin() {
                     )}
                     {emailValidationError ? (
                       <p className="text-xs text-red-600" data-testid="email-validation-error">
-                        ⚠️ {emailValidationError}
+                        ⚠️ Email may not be deliverable. Please enter a valid email to have access.
                       </p>
                     ) : getEmailFormatValidationStatus() && (
                       <p className={`text-xs ${
