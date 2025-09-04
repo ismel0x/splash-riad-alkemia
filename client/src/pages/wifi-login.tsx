@@ -67,6 +67,12 @@ export default function WiFiLogin() {
       form.reset();
     },
     onError: (error: any) => {
+      // Don't show toast notifications for email validation errors
+      // The inline field highlighting is sufficient
+      if (error.message.includes("Email verification failed")) {
+        return; // Email validation error is already shown inline
+      }
+      
       if (error.message.includes("400")) {
         const errorData = JSON.parse(error.message.split(": ")[1]);
         if (errorData.errors) {
@@ -89,6 +95,7 @@ export default function WiFiLogin() {
           });
         }
       } else {
+        // Only show toast for non-email validation errors
         toast({
           title: "Error",
           description: error.message || "Connection failed. Please try again.",
