@@ -240,7 +240,7 @@ export default function WiFiLogin() {
 
     return { 
       type: 'success', 
-      message: 'Valid email format', 
+      message: 'Format correct - email will be verified on connection request', 
       icon: CheckCircle 
     };
   };
