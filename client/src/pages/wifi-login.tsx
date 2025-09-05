@@ -536,12 +536,11 @@ export default function WiFiLogin() {
                         </div>
                       )}
                     </div>
-                    {form.formState.errors.whatsappNumber && (
+                    {form.formState.errors.whatsappNumber ? (
                       <p className="text-xs text-destructive" data-testid="error-whatsapp">
                         {form.formState.errors.whatsappNumber.message}
                       </p>
-                    )}
-                    {getWhatsappValidationStatus() && (
+                    ) : getWhatsappValidationStatus() && (
                       <p className={`text-xs ${
                         getWhatsappValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
                       }`} data-testid="whatsapp-validation-status">
