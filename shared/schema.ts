@@ -31,6 +31,7 @@ export const insertWifiGuestSchema = createInsertSchema(wifiGuests).pick({
     .max(30, "Full name must be maximum 30 characters")
     .regex(/^[A-Za-z\s]+$/, "Full name must contain only alphabetic characters and spaces"),
   accessCode: z.string()
+    .min(6, "Access code must be at least 6 digits")
     .max(9, "Access code must be maximum 9 digits")
     .regex(/^\d+$/, "Access code must contain only numbers"),
   whatsappNumber: z.string()

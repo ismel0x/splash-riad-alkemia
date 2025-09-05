@@ -134,13 +134,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get valid access codes (for testing/admin purposes)
-  app.get("/api/wifi/access-codes", async (req, res) => {
-    res.json({
-      codes: ["ALKEMIA2024", "RIAD123", "GUEST001", "WELCOME", "MARRAKECH"],
-      message: "Use any of these codes to test the WiFi registration"
-    });
-  });
 
   const httpServer = createServer(app);
   return httpServer;

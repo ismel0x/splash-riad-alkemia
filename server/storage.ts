@@ -14,14 +14,8 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.wifiGuests = new Map();
-    // Add some valid access codes for testing
-    this.validAccessCodes = new Set([
-      "ALKEMIA2024",
-      "RIAD123",
-      "GUEST001",
-      "WELCOME",
-      "MARRAKECH"
-    ]);
+    // No predefined access codes - validation will be handled by RADIUS server
+    this.validAccessCodes = new Set();
   }
 
   async getWifiGuest(id: string): Promise<WifiGuest | undefined> {
@@ -46,7 +40,10 @@ export class MemStorage implements IStorage {
   }
 
   async validateAccessCode(code: string): Promise<boolean> {
-    return this.validAccessCodes.has(code);
+    // Only validate format - actual verification will be done by RADIUS server
+    // Format: 6-9 digits only
+    const formatValid = /^\d{6,9}$/.test(code);
+    return formatValid;
   }
 }
 
