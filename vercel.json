@@ -3,10 +3,6 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/index.html",
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm run build",
