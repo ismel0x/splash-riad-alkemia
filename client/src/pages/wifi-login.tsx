@@ -492,12 +492,11 @@ export default function WiFiLogin() {
                         </div>
                       )}
                     </div>
-                    {form.formState.errors.accessCode && (
+                    {form.formState.errors.accessCode ? (
                       <p className="text-xs text-destructive" data-testid="error-access-code">
                         {form.formState.errors.accessCode.message}
                       </p>
-                    )}
-                    {getAccessCodeValidationStatus() && (
+                    ) : getAccessCodeValidationStatus() && (
                       <p className={`text-xs ${
                         getAccessCodeValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
                       }`} data-testid="access-code-validation-status">
