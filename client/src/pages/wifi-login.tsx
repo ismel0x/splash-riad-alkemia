@@ -446,12 +446,11 @@ export default function WiFiLogin() {
                         </div>
                       )}
                     </div>
-                    {form.formState.errors.email && (
+                    {form.formState.errors.email ? (
                       <p className="text-xs text-destructive" data-testid="error-email">
                         {form.formState.errors.email.message}
                       </p>
-                    )}
-                    {emailValidationError ? (
+                    ) : emailValidationError ? (
                       <p className="text-xs text-red-600" data-testid="email-validation-error">
                         ⚠️ Email may not be deliverable. Please enter a valid email to have access.
                       </p>
