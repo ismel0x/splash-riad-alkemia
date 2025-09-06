@@ -1,0 +1,147 @@
+# Deployment Guide - Riad Alkemia WiFi Portal
+
+## Overview
+This guide covers deploying the Riad Alkemia WiFi Portal to Vercel, a platform optimized for modern web applications with serverless functions.
+
+## Prerequisites
+- Vercel account (free tier available)
+- Vercel CLI installed: `npm i -g vercel`
+- VERIMAIL_API_KEY for email validation
+
+## Environment Variables
+Set up these environment variables in your Vercel dashboard or via CLI:
+
+```bash
+VERIMAIL_API_KEY=your_verimail_api_key_here
+NODE_ENV=production
+```
+
+## Deployment Steps
+
+### 1. Initial Setup
+```bash
+# Login to Vercel (if not already)
+vercel login
+
+# Link project to Vercel (run in project root)
+vercel
+```
+
+### 2. Configure Environment Variables
+```bash
+# Add environment variables
+vercel env add VERIMAIL_API_KEY
+# Enter your Verimail API key when prompted
+
+vercel env add NODE_ENV
+# Enter "production" when prompted
+```
+
+### 3. Deploy to Production
+```bash
+# Build and deploy
+npm run build
+vercel --prod
+```
+
+## Project Structure for Deployment
+
+The project uses this structure optimized for Vercel:
+
+```
+├── api/
+│   └── index.js          # Serverless function handler
+├── dist/
+│   ├── public/           # Built frontend assets
+│   └── index.js          # Built backend code
+├── vercel.json           # Vercel configuration
+└── package.json
+```
+
+## Vercel Configuration
+
+The `vercel.json` file configures:
+- Static build for frontend assets
+- API routing to serverless functions
+- Environment variables
+- Fallback routing for SPA
+
+## API Routes
+
+After deployment, these endpoints are available:
+- `POST /api/guests` - Guest registration
+- `POST /api/verify-email` - Email verification
+
+## Build Process
+
+The deployment build process:
+1. Builds frontend with Vite → `dist/public/`
+2. Builds backend with esbuild → `dist/index.js`
+3. Creates serverless function at `api/index.js`
+4. Deploys to Vercel edge network
+
+## Testing Deployment
+
+After deployment:
+1. Visit your Vercel URL
+2. Test the form with valid data
+3. Verify "Connect to WiFi" button works
+4. Check email validation functionality
+
+## Troubleshooting
+
+### 404 Errors on API Calls
+- Ensure `api/index.js` is properly configured
+- Check build output includes `dist/index.js`
+- Verify environment variables are set
+
+### Email Validation Issues
+- Confirm VERIMAIL_API_KEY is set correctly
+- Check API quota and account status
+- Monitor Vercel function logs
+
+### Build Failures
+- Run `npm run build` locally first
+- Check for TypeScript errors
+- Verify all dependencies are in package.json
+
+## Monitoring
+
+Use Vercel dashboard to monitor:
+- Function invocation logs
+- Performance metrics
+- Error rates
+- Build status
+
+## Custom Domain (Optional)
+
+To use a custom domain:
+1. Go to Vercel dashboard
+2. Select your project
+3. Go to Settings → Domains
+4. Add your domain and configure DNS
+
+## Updates and Redeployment
+
+For updates:
+```bash
+# Make your changes, then
+npm run build
+vercel --prod
+```
+
+## Production Considerations
+
+- Email validation costs scale with usage
+- Consider implementing rate limiting for production
+- Monitor API usage and costs
+- Set up error monitoring and alerts
+- Configure proper logging for debugging
+
+## Support
+
+For deployment issues:
+- Check Vercel documentation
+- Review function logs in Vercel dashboard
+- Verify environment variables are correct
+- Test API endpoints directly
