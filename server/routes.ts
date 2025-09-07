@@ -75,7 +75,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // WiFi guest registration endpoint
-  app.post("/api/wifi/register", async (req, res) => {
+  app.post("/api/guests", async (req, res) => {
     try {
       const validatedData = insertWifiGuestSchema.parse(req.body);
       

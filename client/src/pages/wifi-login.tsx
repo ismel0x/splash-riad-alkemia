@@ -58,7 +58,7 @@ export default function WiFiLogin() {
       }
       
       // If email is valid, proceed with registration
-      const response = await apiRequest("POST", "/api/wifi/register", data);
+      const response = await apiRequest("POST", "/api/guests", data);
       return response.json();
     },
     onSuccess: () => {

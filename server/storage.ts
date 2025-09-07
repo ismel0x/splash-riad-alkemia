@@ -10,12 +10,9 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private wifiGuests: Map<string, WifiGuest>;
-  private validAccessCodes: Set<string>;
 
   constructor() {
     this.wifiGuests = new Map();
-    // No predefined access codes - validation will be handled by RADIUS server
-    this.validAccessCodes = new Set();
   }
 
   async getWifiGuest(id: string): Promise<WifiGuest | undefined> {
