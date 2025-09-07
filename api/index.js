@@ -1,7 +1,4 @@
-import express from 'express';
 import { randomUUID } from 'crypto';
-
-// Zod schema validation (copied from shared/schema.ts)
 import { z } from 'zod';
 
 const insertWifiGuestSchema = z.object({
@@ -93,34 +90,45 @@ async function verifyEmailWithVerimail(email) {
   }
 }
 
-// Create Express app
-const app = express();
+// Helper function to parse request body
+async function parseRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch (error) {
+        reject(new Error('Invalid JSON'));
+      }
+    });
+    req.on('error', reject);
+  });
+}
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Helper function to set CORS headers
+function setCorsHeaders(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+}
 
-// CORS middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-    return;
-  }
-  
-  next();
-});
+// Helper function to send JSON response
+function sendJson(res, statusCode, data) {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(statusCode).json(data);
+}
 
-// Email verification endpoint
-app.post("/api/verify-email", async (req, res) => {
+// Email verification handler
+async function handleVerifyEmail(req, res) {
   try {
-    const { email } = req.body;
+    const body = await parseRequestBody(req);
+    const { email } = body;
     
     if (!email || typeof email !== 'string') {
-      return res.status(400).json({
+      return sendJson(res, 400, {
         message: "Email is required",
         isValid: false
       });
@@ -128,7 +136,7 @@ app.post("/api/verify-email", async (req, res) => {
 
     const verification = await verifyEmailWithVerimail(email);
     
-    res.json({
+    return sendJson(res, 200, {
       email,
       isValid: verification.isValid,
       isDeliverable: verification.isDeliverable,
@@ -137,22 +145,23 @@ app.post("/api/verify-email", async (req, res) => {
     });
   } catch (error) {
     console.error("Email verification endpoint error:", error);
-    res.status(500).json({
+    return sendJson(res, 500, {
       message: "Email verification service unavailable",
       isValid: false
     });
   }
-});
+}
 
-// WiFi guest registration endpoint
-app.post("/api/guests", async (req, res) => {
+// Guest registration handler
+async function handleGuestRegistration(req, res) {
   try {
-    const validatedData = insertWifiGuestSchema.parse(req.body);
+    const body = await parseRequestBody(req);
+    const validatedData = insertWifiGuestSchema.parse(body);
     
     // Check if access code is valid
     const isValidCode = await storage.validateAccessCode(validatedData.accessCode);
     if (!isValidCode) {
-      return res.status(400).json({ 
+      return sendJson(res, 400, { 
         message: "Invalid access code. Please check with reception.",
         field: "accessCode"
       });
@@ -161,7 +170,7 @@ app.post("/api/guests", async (req, res) => {
     // Verify email with Verimail
     const emailVerification = await verifyEmailWithVerimail(validatedData.email);
     if (!emailVerification.isValid || !emailVerification.isDeliverable) {
-      return res.status(400).json({
+      return sendJson(res, 400, {
         message: emailVerification.error || "Please enter a valid email address that can receive emails.",
         field: "email"
       });
@@ -170,7 +179,7 @@ app.post("/api/guests", async (req, res) => {
     // Check if email already exists
     const existingGuest = await storage.getWifiGuestByEmail(validatedData.email);
     if (existingGuest) {
-      return res.status(400).json({ 
+      return sendJson(res, 400, { 
         message: "This email is already registered. You should already have WiFi access.",
         field: "email"
       });
@@ -178,7 +187,7 @@ app.post("/api/guests", async (req, res) => {
 
     const guest = await storage.createWifiGuest(validatedData);
     
-    res.status(201).json({
+    return sendJson(res, 201, {
       success: true,
       message: "WiFi access granted successfully!",
       guestId: guest.id
@@ -191,26 +200,50 @@ app.post("/api/guests", async (req, res) => {
           fieldErrors[err.path[0]] = err.message;
         }
       });
-      return res.status(400).json({ 
+      return sendJson(res, 400, { 
         message: "Validation failed",
         errors: fieldErrors
       });
     }
     
     console.error("WiFi registration error:", error);
-    res.status(500).json({ 
+    return sendJson(res, 500, { 
       message: "Internal server error. Please try again." 
     });
   }
-});
+}
 
-// Export the serverless function handler
+// Main serverless function handler
 export default async function handler(req, res) {
+  // Set CORS headers
+  setCorsHeaders(res);
+  
+  // Handle OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   try {
-    // Handle the request with Express app
-    app(req, res);
+    const { url, method } = req;
+    
+    // Route based on URL and method
+    if (method === 'POST' && url === '/api/verify-email') {
+      return await handleVerifyEmail(req, res);
+    }
+    
+    if (method === 'POST' && url === '/api/guests') {
+      return await handleGuestRegistration(req, res);
+    }
+    
+    // Handle 404 for unmatched routes
+    return sendJson(res, 404, { 
+      message: "Not found" 
+    });
+    
   } catch (error) {
     console.error('Handler error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return sendJson(res, 500, { 
+      error: 'Internal server error' 
+    });
   }
 }
