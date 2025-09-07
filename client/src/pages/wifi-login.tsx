@@ -25,6 +25,7 @@ export default function WiFiLogin() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const { toast } = useToast();
 
   const t = translations[language];
@@ -64,6 +65,7 @@ export default function WiFiLogin() {
     onSuccess: () => {
       setShowSuccessModal(true);
       setEmailValidationError(null);
+      setCurrentStep(1);
       form.reset();
     },
     onError: (error: any) => {
@@ -117,6 +119,46 @@ export default function WiFiLogin() {
   const handleTermsAccept = () => {
     form.setValue("acceptedTerms", true);
     setShowTermsModal(false);
+  };
+
+  // Step 1 validation (access code + terms)
+  const validateStep1 = () => {
+    const accessCode = form.getValues("accessCode");
+    const acceptedTerms = form.getValues("acceptedTerms");
+    
+    const isValidCode = /^\d{6,9}$/.test(accessCode);
+    
+    if (!isValidCode) {
+      form.setError("accessCode", {
+        type: "manual",
+        message: "Access code must be 6-9 digits"
+      });
+      return false;
+    }
+    
+    if (!acceptedTerms) {
+      form.setError("acceptedTerms", {
+        type: "manual",
+        message: "You must accept the terms and conditions"
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Handle step 1 submission
+  const handleStep1Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateStep1()) {
+      form.clearErrors();
+      setCurrentStep(2);
+    }
+  };
+
+  // Handle back to step 1
+  const handleBackToStep1 = () => {
+    setCurrentStep(1);
   };
 
 
@@ -323,22 +365,132 @@ export default function WiFiLogin() {
           {/* Form/Confirmation Card */}
           <Card className="form-container bg-card/95 backdrop-blur-sm shadow-lg mb-4">
             <CardContent className="p-6">
-              {/* WiFi Access Header */}
+              {/* WiFi Access Header with Step Progress */}
               <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-border">
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                   <Wifi className="h-5 w-5 text-primary" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h2 className="font-semibold text-foreground" data-testid="text-wifi-access">
                     {t.wifiAccess}
                   </h2>
                   <p className="text-xs text-muted-foreground" data-testid="text-connect-message">
-                    {t.connectMessage}
+                    {currentStep === 1 ? "Step 1: Enter Access Code" : "Step 2: Complete Your Details"}
                   </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    currentStep === 1 ? 'bg-primary' : 'bg-green-500'
+                  }`} />
+                  <div className={`w-2 h-2 rounded-full ${
+                    currentStep === 2 ? 'bg-primary' : 'bg-muted'
+                  }`} />
                 </div>
               </div>
 
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {currentStep === 1 ? (
+                <form onSubmit={handleStep1Submit} className="space-y-4">
+                  {/* Access Code Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="accessCode" className="text-sm font-medium">
+                      {t.accessCode} <span className="text-destructive">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="accessCode"
+                        type="number"
+                        placeholder={t.enterAccessCode}
+                        {...form.register("accessCode")}
+                        className={`input-focus tracking-wider pl-10 pr-10 ${
+                          getAccessCodeValidationStatus()?.type === 'success' ? 'border-green-500' :
+                          getAccessCodeValidationStatus()?.type === 'error' ? 'border-red-500' : ''
+                        }`}
+                        data-testid="input-access-code"
+                      />
+                      {getAccessCodeValidationStatus() && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          {getAccessCodeValidationStatus()?.type === 'success' && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                          {getAccessCodeValidationStatus()?.type === 'error' && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {form.formState.errors.accessCode ? (
+                      <p className="text-xs text-destructive" data-testid="error-access-code">
+                        {form.formState.errors.accessCode.message}
+                      </p>
+                    ) : getAccessCodeValidationStatus() && (
+                      <p className={`text-xs ${
+                        getAccessCodeValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`} data-testid="access-code-validation-status">
+                        {getAccessCodeValidationStatus()?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Terms & Conditions */}
+                  <div className="space-y-2">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="acceptTerms"
+                        checked={form.watch("acceptedTerms")}
+                        onCheckedChange={(checked) => 
+                          form.setValue("acceptedTerms", checked as boolean)
+                        }
+                        className="mt-1"
+                        data-testid="checkbox-accept-terms"
+                      />
+                      <Label htmlFor="acceptTerms" className="text-sm leading-relaxed cursor-pointer">
+                        {t.acceptTerms}{" "}
+                        <button
+                          type="button"
+                          onClick={() => setShowTermsModal(true)}
+                          className="text-primary underline hover:no-underline"
+                          data-testid="button-open-terms"
+                        >
+                          {t.termsAndConditions}
+                        </button>
+                      </Label>
+                    </div>
+                    {form.formState.errors.acceptedTerms && (
+                      <p className="text-xs text-destructive" data-testid="error-terms">
+                        {form.formState.errors.acceptedTerms.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Next Step Button */}
+                  <Button
+                    type="submit"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
+                    data-testid="button-next-step"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span>Continue</span>
+                      <ArrowLeft className="h-4 w-4 rotate-180" />
+                    </div>
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  {/* Back Button */}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleBackToStep1}
+                    className="w-full mb-4 text-muted-foreground hover:text-foreground"
+                    data-testid="button-back"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <ArrowLeft className="h-4 w-4" />
+                      <span>Back to Access Code</span>
+                    </div>
+                  </Button>
+
                   {/* Title Field */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">
@@ -463,48 +615,6 @@ export default function WiFiLogin() {
                     )}
                   </div>
 
-                  {/* Access Code Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="accessCode" className="text-sm font-medium">
-                      {t.accessCode} <span className="text-destructive">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="accessCode"
-                        type="number"
-                        placeholder={t.enterAccessCode}
-                        {...form.register("accessCode")}
-                        className={`input-focus tracking-wider pl-10 pr-10 ${
-                          getAccessCodeValidationStatus()?.type === 'success' ? 'border-green-500' :
-                          getAccessCodeValidationStatus()?.type === 'error' ? 'border-red-500' : ''
-                        }`}
-                        data-testid="input-access-code"
-                      />
-                      {getAccessCodeValidationStatus() && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          {getAccessCodeValidationStatus()?.type === 'success' && (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          )}
-                          {getAccessCodeValidationStatus()?.type === 'error' && (
-                            <AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    {form.formState.errors.accessCode ? (
-                      <p className="text-xs text-destructive" data-testid="error-access-code">
-                        {form.formState.errors.accessCode.message}
-                      </p>
-                    ) : getAccessCodeValidationStatus() && (
-                      <p className={`text-xs ${
-                        getAccessCodeValidationStatus()?.type === 'success' ? 'text-green-600' : 'text-red-600'
-                      }`} data-testid="access-code-validation-status">
-                        {getAccessCodeValidationStatus()?.message}
-                      </p>
-                    )}
-                  </div>
-
                   {/* WhatsApp Number Field */}
                   <div className="space-y-2">
                     <Label htmlFor="whatsappNumber" className="text-sm font-medium">
@@ -547,41 +657,10 @@ export default function WiFiLogin() {
                     )}
                   </div>
 
-                  {/* Terms & Conditions */}
-                  <div className="space-y-2">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id="acceptTerms"
-                        checked={form.watch("acceptedTerms")}
-                        onCheckedChange={(checked) => 
-                          form.setValue("acceptedTerms", checked as boolean)
-                        }
-                        className="mt-1"
-                        data-testid="checkbox-accept-terms"
-                      />
-                      <Label htmlFor="acceptTerms" className="text-sm leading-relaxed cursor-pointer">
-                        {t.acceptTerms}{" "}
-                        <button
-                          type="button"
-                          onClick={() => setShowTermsModal(true)}
-                          className="text-primary underline hover:no-underline"
-                          data-testid="button-open-terms"
-                        >
-                          {t.termsAndConditions}
-                        </button>
-                      </Label>
-                    </div>
-                    {form.formState.errors.acceptedTerms && (
-                      <p className="text-xs text-destructive" data-testid="error-terms">
-                        {form.formState.errors.acceptedTerms.message}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    disabled={registerMutation.isPending || !form.watch("acceptedTerms")}
+                    disabled={registerMutation.isPending}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid="button-submit"
                   >
@@ -598,6 +677,7 @@ export default function WiFiLogin() {
                     )}
                   </Button>
                 </form>
+              )}
             </CardContent>
           </Card>
 
