@@ -1,8 +1,8 @@
-# Replit Configuration for WiFi Guest Registration System
+# Riad Alkemia WiFi Portal
 
 ## Overview
 
-This is a WiFi guest registration system for Riad Alkemia, a boutique hotel in Marrakech. The application provides a user-friendly interface for guests to register for WiFi access by providing their details and accepting terms of service. The system includes email verification using Verimail API and supports multiple languages (English, French, Arabic). It features a modern, responsive design with Moroccan hospitality theming.
+This is a WiFi guest portal application for Riad Alkemia, a Moroccan hospitality business in Marrakech. The application provides a registration system for WiFi access where guests fill out their details, verify their email, and receive WiFi credentials. The system includes multi-language support (English, French, Arabic) and integrates with email verification services to ensure valid guest information.
 
 ## User Preferences
 
@@ -11,59 +11,79 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React with TypeScript using Vite for build tooling
-- **UI Library**: Radix UI components with shadcn/ui design system
-- **Styling**: Tailwind CSS with custom theming for Riad Alkemia branding
-- **State Management**: React Hook Form for form handling, TanStack Query for API state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Internationalization**: Custom i18n implementation supporting English, French, and Arabic
+
+The frontend is built as a single-page application using:
+- **React 18** with TypeScript for the main UI framework
+- **Vite** as the build tool and development server
+- **Wouter** for client-side routing (lightweight React router alternative)
+- **Tailwind CSS** with shadcn/ui components for styling and UI components
+- **React Hook Form** with Zod validation for form handling and validation
+- **TanStack Query** for API state management and caching
+- **i18n system** for multi-language support (English, French, Arabic)
+
+The application follows a component-based architecture with:
+- Page components in `client/src/pages/`
+- Reusable UI components in `client/src/components/ui/`
+- Custom hooks for device detection and toast notifications
+- Centralized form validation using Zod schemas
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **API Design**: RESTful endpoints for guest registration and email verification
-- **Session Management**: Express sessions with PostgreSQL session store
-- **Validation**: Zod schemas for request/response validation
+
+The backend uses a hybrid approach suitable for both development and serverless deployment:
+- **Express.js** server with TypeScript
+- **In-memory storage** for simplicity (no database persistence)
+- **Serverless-ready** architecture with Vercel Functions support
+- **RESTful API** design with clear endpoint separation
+
+Key backend features:
+- Email verification endpoint using Verimail API
+- Guest registration with form validation
+- Access code validation (format-based)
+- Environment-based configuration
 
 ### Data Storage Solutions
-- **Primary Database**: PostgreSQL via Neon (serverless PostgreSQL)
-- **ORM**: Drizzle ORM with type-safe database operations
-- **Session Storage**: PostgreSQL-backed session storage using connect-pg-simple
-- **Development Fallback**: In-memory storage implementation for local development
 
-### Email Verification System
-- **Service**: Verimail API integration for email validation
-- **Validation Process**: Real-time email verification before registration
-- **Error Handling**: Comprehensive error handling for invalid/undeliverable emails
-- **Security**: API key-based authentication with environment variable configuration
+The application currently uses **in-memory storage** via a custom `MemStorage` class that implements:
+- WiFi guest data storage with UUID-based IDs
+- Email-based guest lookup
+- Access code validation
+- Thread-safe operations for concurrent access
 
-### Deployment Architecture
-- **Platform**: Vercel with serverless functions
-- **Build Process**: Vite for frontend bundling, esbuild for backend compilation
-- **Static Assets**: Served via Vercel's CDN with optimized asset handling
-- **Environment**: Environment-specific configurations for development and production
+This design allows for easy migration to persistent storage (PostgreSQL with Drizzle ORM is configured but not currently used).
+
+### Authentication and Authorization
+
+The system uses a simple access-code based approach:
+- Guests receive access codes from hotel reception
+- Access codes are validated by format (6-9 digits)
+- No persistent user sessions or complex authentication
+- Email verification ensures valid contact information
+
+### Form Validation and User Experience
+
+- **Multi-step validation** with real-time feedback
+- **Email verification** integration with Verimail service
+- **Accessibility features** with proper ARIA labels and semantic HTML
+- **Responsive design** optimized for mobile devices (common in hospitality)
+- **Progressive enhancement** with loading states and error handling
 
 ## External Dependencies
 
-### Core Services
-- **Neon Database**: Serverless PostgreSQL database hosting
-- **Verimail API**: Email verification and validation service
-- **Vercel**: Deployment platform and serverless function hosting
+### Third-Party Services
+- **Verimail API** - Email verification service to ensure valid guest email addresses
+- **Vercel** - Hosting platform with serverless function deployment
+- **Neon Database** - PostgreSQL hosting (configured but not actively used)
 
-### Development Tools
-- **Vite**: Frontend build tool with HMR and asset optimization
-- **TypeScript**: Type safety across frontend and backend
-- **ESLint/Prettier**: Code quality and formatting tools
-- **Drizzle Kit**: Database migration and schema management
+### Key Libraries
+- **React ecosystem** - React 18, React Hook Form, TanStack Query for frontend functionality
+- **UI Framework** - Tailwind CSS with shadcn/ui component library for consistent design
+- **Validation** - Zod for schema validation across frontend and backend
+- **Build Tools** - Vite for development and build processes, esbuild for backend bundling
+- **Icons** - Lucide React for consistent iconography
 
-### UI/UX Libraries
-- **Radix UI**: Accessible component primitives
-- **Tailwind CSS**: Utility-first CSS framework
-- **Lucide Icons**: Modern icon library
-- **React Hook Form**: Form state management and validation
-- **TanStack Query**: Server state management and caching
+### Development Dependencies
+- **TypeScript** for type safety across the entire application
+- **ESLint and Prettier** for code quality and formatting
+- **Replit integration** for development environment optimization
 
-### Third-party Integrations
-- **Google Fonts**: Custom typography (Lato font family)
-- **Asset Management**: Static asset handling for Riad Alkemia branding
-- **CORS Configuration**: Cross-origin resource sharing for API access
+The architecture prioritizes simplicity and deployability while maintaining flexibility for future enhancements like persistent storage, user analytics, or integration with hotel management systems.
